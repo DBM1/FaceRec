@@ -16,10 +16,11 @@ def capture(id):
     cap = cv2.VideoCapture(0)
     classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
     pList = []
+    i = 0
     path = "../TrainImage/" + id
     if not os.path.exists(path):
         os.makedirs(path)
-    for i in range(400):
+    while i < 400:
         ret, img = cap.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = classifier.detectMultiScale(gray, 1.3, 5, minSize=(80, 80))
@@ -29,8 +30,10 @@ def capture(id):
             face = cv2.resize(face, (64, 64))
             pList.append(face)
             cv2.imwrite(path + "/%d.png" % i, relight(face, np.random.uniform(0.5, 1.5)))
+            i += 1
         cv2.imshow('image', relight(img, 1.5))
         if cv2.waitKey(1) & 0xff == ord("q"):
             break
     cap.release()
     cv2.destroyAllWindows()
+
