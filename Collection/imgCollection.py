@@ -41,3 +41,5 @@ def capture(id):
             break
     cap.release()
     cv2.destroyAllWindows()
+
+capture("0004")
