@@ -18,22 +18,28 @@ def capture(id):
     pList = []
     i = 0
     path = "../TrainImage/" + id
+    if id == "":
+        print("id is empty!")
+        return
     if not os.path.exists(path):
         os.makedirs(path)
+    else:
+        print("path is existed!")
+        return
     while i < 400:
         ret, img = cap.read()
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = classifier.detectMultiScale(gray, 1.3, 5, minSize=(80, 80))
+        faces = classifier.detectMultiScale(img, 1.3, 5, minSize=(80, 80))
         for (x, y, w, h) in faces:
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            face = gray[y:y + h, x:x + w]
+            face = img[y:y + h, x:x + w]
             face = cv2.resize(face, (64, 64))
             pList.append(face)
             cv2.imwrite(path + "/%d.png" % i, relight(face, np.random.uniform(0.5, 1.5)))
             i += 1
-        cv2.imshow('image', relight(img, 1.5))
+        cv2.imshow('image', img)
         if cv2.waitKey(1) & 0xff == ord("q"):
             break
     cap.release()
     cv2.destroyAllWindows()
 
+capture("0004")
