@@ -156,7 +156,9 @@ class LoginScreen(Screen):
         adr = '192.168.43.14'
         port = 12345
         s.connect((adr, port))
-        s.send(str(("login", self.ids['ID'].text, self.ids['password'].text)).encode())
+        s.send(("login," + self.ids['ID'].text + ',' + self.ids['password'].text).encode())
+        print(s.recv(1024))
+
         s.close()
         return
 
