@@ -3,6 +3,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.window import Window
 
 
 PORT = 5920
@@ -66,7 +67,7 @@ Builder.load_string("""
                 id: ID
                 hint_text: "ID"
                 size_hint: (0.25, 1/17)
-                pos_hint: {'center_x': 0.81, 'y': 0.65}
+                pos_hint: {'center_x': 0.21, 'y': 0.60}               #0.81   0.65
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -74,14 +75,14 @@ Builder.load_string("""
                 id: password
                 hint_text: "Password"
                 size_hint: (0.25, 1/17)
-                pos_hint: {'center_x': 0.81, 'y': 0.53}
+                pos_hint: {'center_x': 0.21, 'y': 0.48}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
             Button:
                 text:'Login'
                 size_hint: (0.15, 1/17)
-                pos_hint: {'center_x': 0.81, 'y': 0.25}
+                pos_hint: {'center_x': 0.21, 'y': 0.2}
 
 """)
 
@@ -92,13 +93,14 @@ class LoginScreen(Screen):
 
 class LoginApp(App):
     def build(self):
+        Window.fullscreen = "auto"
         self.title = 'Login'
         return LoginScreen()
 
 
-if __name__ == '__main__':
-    Config.set('graphics', 'width', '800')
-    Config.set('graphics', 'height', '600')
+#if __name__ == '__main__':
+#    Config.set('graphics', 'width', '800')
+#    Config.set('graphics', 'height', '600')
 
 
 LoginApp().run()

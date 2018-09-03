@@ -4,6 +4,7 @@ from kivy.lang import Builder
 from kivy.config import Config
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.core.window import Window
 
 from kivy.uix.modalview import ModalView
 
@@ -15,7 +16,6 @@ Builder.load_string("""
 #:import sla kivy.adapters.simplelistadapter
 
 <ScreenManager>:
-    
     MainEmScreen
     QueryEmScreen
     SettingsEmScreen
@@ -75,19 +75,19 @@ Builder.load_string("""
             Rectangle:
                 pos: self.pos
                 size: self.size
-                source: "UI/mainEm-back.png"
+                source: "UI/back1.png"
 
         FloatLayout:
             Button:
-                size_hint: (0.28, 0.42)
-                pos_hint: {'center_x': 0.295, 'y': 0.195}
+                size_hint: (0.29, 0.15)
+                pos_hint: {'center_x': 0.82, 'y': 0.52}
                 background_normal: 'UI/mainEm-query.png'
                 background_down: 'UI/mainEm-query-down.png'
                 on_release: root.manager.current = 'queryEm'
 
             Button:
-                size_hint: (0.28, 0.42)
-                pos_hint: {'center_x': 0.69, 'y': 0.195}
+                size_hint: (0.29, 0.15)
+                pos_hint: {'center_x': 0.82, 'y': 0.28}
                 background_normal: 'UI/mainEm-settings.png'
                 background_down:'UI/mainEm-settings-down.png'
                 on_release: root.manager.current = 'settingsEm'
@@ -107,31 +107,32 @@ Builder.load_string("""
 
         FloatLayout:
             ListViewModal:
-                pos_hint: {'center_x': 0.53, 'y': 0.1}
-
+                pos_hint: {'center_x': 0.39, 'y': 0.1}
+                size_hint: (0.63, 0.61)
+                
             Image:
                 size_hint: (0.1, 0.1)
-                pos_hint:{'center_x': 0.9, 'y': 0.85}
+                pos_hint:{'center_x': 0.82, 'y': 0.85}
                 source: 'UI/icon.png'
-
+                
             Label:
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
                 text: 'XXX,123456,市场部'
-
+                
             Label:
                 font_size:20
                 text: '选择日期:'
                 size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.21, 'y': 0.73}
-
+                pos_hint: {'center_x': 0.11, 'y': 0.73}
+            
 
             TextInput:                       #选择框
                 id: ID
                 hint_text: "ID"
                 size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.5, 'y': 0.73}
+                pos_hint: {'center_x': 0.3, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -139,81 +140,73 @@ Builder.load_string("""
                 id: password
                 hint_text: "Password"
                 size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.77, 'y': 0.73}
+                pos_hint: {'center_x': 0.56, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
+                
             Label:
                 font_size:14
                 text: '迟到/天'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.21, 'y': 0.04}
-
+                pos_hint: {'center_x': 0.07, 'y': 0.04}
+                
             TextInput:                       
                 id: late
                 hint_text: "late"
                 size_hint: (0.06, 0.04)
-                pos_hint: {'center_x': 0.28, 'y': 0.04}
+                pos_hint: {'center_x': 0.12, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
+            
             Label:
                 font_size:14
-                text: '请假/天'
+                text: '旷工/天'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.36, 'y': 0.04}
-
+                pos_hint: {'center_x': 0.21, 'y': 0.04}
+                
             TextInput:                       
                 id: off
                 hint_text: 'off'
                 size_hint: (0.06, 0.04)
-                pos_hint: {'center_x': 0.43, 'y': 0.04}
+                pos_hint: {'center_x': 0.26, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
+                
             Label:
                 font_size:14
                 text: '早退/天'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.51, 'y': 0.04}
-
+                pos_hint: {'center_x': 0.35, 'y': 0.04}
+                
             TextInput:                       
                 id: early
                 hint_text: 'early'
                 size_hint: (0.06, 0.04)
-                pos_hint: {'center_x': 0.58, 'y': 0.04}
+                pos_hint: {'center_x': 0.40, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
+                
             Label:
                 font_size:14
                 text: '正常/天'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.66, 'y': 0.04}
-
+                pos_hint: {'center_x': 0.49, 'y': 0.04}
+                
             TextInput:                       
                 id: normal
                 hint_text: 'normal'
                 size_hint: (0.06, 0.04)
-                pos_hint: {'center_x': 0.73, 'y': 0.04}
+                pos_hint: {'center_x': 0.54, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
+                
             Button:
                 text: '导出'
                 size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.85, 'y': 0.04}
+                pos_hint: {'center_x': 0.66, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 #on_release: 
-
-            Button:
-                text: 'Return'
-                size_hint: (0.1, 0.1)
-                pos_hint: {'center_x': 0.05, 'y': 0.02}
-                background_normal: 'UI/button_normal.png'
-                background_down: 'UI/button_down.png'
-                on_release: root.manager.current = 'mainEm'
 
 <SettingsEmScreen>:
     name: 'settingsEm'
@@ -232,34 +225,34 @@ Builder.load_string("""
 
             Image:
                 size_hint: (0.15, 0.15)
-                pos_hint:{'center_x': 0.9, 'y': 0.65}
+                pos_hint:{'center_x': 0.87, 'y': 0.65}
                 source: 'UI/icon.png'
 
             Label:
                 font_size:20
                 text: 'ID:'
                 size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.21, 'y': 0.68}
+                pos_hint: {'center_x': 0.16, 'y': 0.68}
                 
             TextInput:                       
                 id: ID
                 hint_text: "ID"
                 size_hint: (0.11, 0.04)
-                pos_hint: {'center_x': 0.285, 'y': 0.68}
+                pos_hint: {'center_x': 0.235, 'y': 0.68}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
                 
             Label:
                 font_size:20
                 size_hint: (0.10, 0.04)
-                pos_hint:{'center_x': 0.40, 'y': 0.68}
+                pos_hint:{'center_x': 0.36, 'y': 0.68}
                 text: 'Name:'
 
             TextInput:                       
                 id: name
                 hint_text: "Name"
                 size_hint: (0.11, 0.04)
-                pos_hint: {'center_x': 0.495, 'y': 0.68}
+                pos_hint: {'center_x': 0.445, 'y': 0.68}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
                 
@@ -267,13 +260,13 @@ Builder.load_string("""
                 font_size:20
                 text: 'Apartment:'
                 size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.64, 'y': 0.68}
+                pos_hint: {'center_x': 0.59, 'y': 0.68}
 
             TextInput:                       #选择框
-                id: password
+                id: apartment
                 hint_text: "Apartment"
                 size_hint: (0.11, 0.04)
-                pos_hint: {'center_x': 0.763, 'y': 0.68}
+                pos_hint: {'center_x': 0.713, 'y': 0.68}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -281,12 +274,12 @@ Builder.load_string("""
                 font_size:20
                 text: '原密码:'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.38, 'y': 0.5}
+                pos_hint: {'center_x': 0.3, 'y': 0.5}
 
             TextInput:                       
                 id: previousPass
                 size_hint: (0.32, 0.05)
-                pos_hint: {'center_x': 0.65, 'y': 0.5}
+                pos_hint: {'center_x': 0.57, 'y': 0.5}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -294,12 +287,12 @@ Builder.load_string("""
                 font_size:20
                 text: '新密码:'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.38, 'y': 0.4}
+                pos_hint: {'center_x': 0.3, 'y': 0.4}
 
             TextInput:                       
                 id: newPass
                 size_hint: (0.32, 0.05)
-                pos_hint: {'center_x': 0.65, 'y': 0.4}
+                pos_hint: {'center_x': 0.57, 'y': 0.4}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -307,12 +300,12 @@ Builder.load_string("""
                 font_size:20
                 text: '确认新密码:'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.38, 'y': 0.3}
+                pos_hint: {'center_x': 0.3, 'y': 0.3}
 
             TextInput:                       
                 id: idetiNewPass
                 size_hint: (0.32, 0.05)
-                pos_hint: {'center_x': 0.65, 'y': 0.3}
+                pos_hint: {'center_x': 0.57, 'y': 0.3}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
@@ -320,34 +313,27 @@ Builder.load_string("""
                 font_size:20
                 text: '验证码:'
                 size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.38, 'y': 0.2}
+                pos_hint: {'center_x': 0.3, 'y': 0.2}
 
             TextInput:                       
                 id: code
                 size_hint: (0.2, 0.05)
-                pos_hint: {'center_x': 0.65, 'y': 0.2}
+                pos_hint: {'center_x': 0.57, 'y': 0.2}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
                 
             Image:
                 size_hint: (0.18, 0.1)
-                pos_hint: {'center_x': 0.55, 'y': 0.07}
+                pos_hint: {'center_x': 0.47, 'y': 0.07}
 
             Button:
                 text: '确认修改'
                 size_hint: (0.15, 0.06)
-                pos_hint: {'center_x': 0.88, 'y': 0.06}
+                pos_hint: {'center_x': 0.80, 'y': 0.06}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 #on_release: root.manager.current = 'queryAd'
 
-            Button:
-                text: 'Return'
-                size_hint: (0.1, 0.1)
-                pos_hint: {'center_x': 0.05, 'y': 0.02}
-                background_normal: 'UI/button_normal.png'
-                background_down: 'UI/button_down.png'
-                on_release: root.manager.current = 'mainEm'
 """)
 
 
@@ -365,21 +351,24 @@ class MainEmScreen(Screen):
 
 
 class QueryEmScreen(Screen):
-    pass
+    def on_touch_move(self, touch):
+        self.manager.current = "mainEm"
 
 
 class SettingsEmScreen(Screen):
-    pass
+    def on_touch_move(self, touch):
+        self.manager.current = "mainEm"
 
 
 class EmployeeApp(App):
     def build(self):
+        Window.fullscreen = "auto"
         self.title = 'Employee'
         return ScreenManager()
 
 
-if __name__ == '__main__':
-    Config.set('graphics', 'width', '800')
-    Config.set('graphics', 'height', '600')
+#if __name__ == '__main__':
+#    Config.set('graphics', 'width', '800')
+#    Config.set('graphics', 'height', '600')
 
 EmployeeApp().run()
