@@ -1,4 +1,4 @@
-#coding=utf-8
+# coding=utf-8
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.config import Config
@@ -12,16 +12,19 @@ from kivy.uix.modalview import ModalView
 from kivy.core.window import Window
 from kivy.uix.spinner import Spinner
 from kivy.uix.screenmanager import SlideTransition
-
-
+from kivy.uix.floatlayout import FloatLayout
+import time
+from Collection import imgCollection
+import os
+import numpy as np
 PORT = 5920
 
 Builder.load_string("""
 #:import C kivy.utils.get_color_from_hex
 #:import label kivy.uix.label
 #:import sla kivy.adapters.simplelistadapter
+<KivyCamera>
 
-    
 <BoxLayout>:
     padding: 10
     spacing: 10
@@ -126,10 +129,10 @@ Builder.load_string("""
                 source: "UI/InputAd-back.png"
 
         FloatLayout:
-            Camera:
-                resolution: (256, 256)
-                pos_hint: {'center_x': 0.25, 'y': 0}
-                play:True
+            # Camera:
+            #     resolution: (256, 256)
+            #     pos_hint: {'center_x': 0.25, 'y': 0}
+            #     play:True
                 
             TextInput:
                 id: ID
@@ -161,6 +164,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.79, 'y': 0.23}
                 background_normal: 'UI/button_normal.png'
                 background_down: 'UI/button_down.png'
+                on_release: root.fun()
                
 #           Button:
 #               text: 'Return'
@@ -408,33 +412,41 @@ class ListViewModal(ModalView):
 
 
 class KivyCamera(Image):
-    def __init__(self, capture, fps):
+    def __init__(self, fps, id):
         super(KivyCamera, self).__init__()
-        self.capture = capture
+        self.capture = cv2.VideoCapture(0)
+        self.pList = []
+        self.i = 0
+        self.classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+        self.path = "../TrainImage/" + id
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
         Clock.schedule_interval(self.update, 1.0 / fps)
 
     def update(self, dt):
         ret, frame = self.capture.read()
         if ret:
-            # convert it to texture
-            buf1 = cv2.flip(frame, 0)
-            buf = buf1.tostring()
-            image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
-            image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
-            # display image from the texture
-            self.texture = image_texture
+            if (self.i < 400):
+                faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(80, 80))
+                for (x, y, w, h) in faces:
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    face = frame[y:y + h, x:x + w]
+                    face = cv2.resize(face, (64, 64))
+                    self.pList.append(face)
+                    cv2.imwrite(self.path + "/%d.png" % self.i,
+                                imgCollection.relight(face, np.random.uniform(0.5, 1.5)))
+                    self.i += 1
+                # convert it to texture
+                buf1 = cv2.flip(frame, 0)
+                buf = buf1.tostring()
+                image_texture = Texture.create(size=(frame.shape[1], frame.shape[0]), colorfmt='bgr')
+                image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
+                # display image from the texture
+                self.texture = image_texture
 
-
-class CamApp(App):
-    def build(self):
-        self.capture = cv2.VideoCapture(0)
-        self.my_camera = KivyCamera(capture=self.capture, fps=10)
-        self.title="人脸数据采集"
-        return self.my_camera
-
-    def on_stop(self):
-        #without this, app will not exit even if the window is closed
-        self.capture.release()
+        else:
+            self.parent.remove_widget(self)
+            self.capture.release()
 
 
 # class YearSpinner(Spinner):
@@ -453,10 +465,15 @@ class MainAdScreen(Screen):
 
 
 class InputAdScreen(Screen):
+
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
         self.manager.transition = SlideTransition(direction="left")
+
+    def fun(self):
+        camera = KivyCamera(144, "100000")
+        self.add_widget(camera)
 
 
 class QueryAdScreen(Screen):
