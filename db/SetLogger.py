@@ -6,13 +6,12 @@ import os.path
 
 # 设置日志输出
 cf = configparser.ConfigParser()
-cf.read("database.conf")
+cf.read(os.path.dirname(os.getcwd())+"\config.conf")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logpath = cf.get("path", "logpath")
 rq = time.strftime('%Y%m%d%H%M', time.localtime(time.time()))
 log_path = os.path.dirname(os.getcwd()) + logpath + "\database"
-print(log_path)
 log_name = log_path + rq + '.log'
 logfile = log_name
 fh = logging.FileHandler(logfile, mode='w')
