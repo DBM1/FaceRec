@@ -1,11 +1,12 @@
 import pymysql
 import configparser
 import SetLogger
+import os
 
 # 从配置文件中读取数据库参数
 DB = "database"
 cf = configparser.ConfigParser()
-cf.read("database.conf")
+cf.read(os.path.dirname(os.getcwd())+"\config.conf")
 db_host = cf.get(DB, "db_host")
 db_port = cf.get(DB, "db_port")
 db_user = cf.get(DB, "db_user")
