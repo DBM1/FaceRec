@@ -17,6 +17,7 @@ import time
 from Collection import imgCollection
 import os
 import numpy as np
+
 PORT = 5920
 
 Builder.load_string("""
@@ -129,11 +130,6 @@ Builder.load_string("""
                 source: "UI/InputAd-back.png"
 
         FloatLayout:
-            # Camera:
-            #     resolution: (256, 256)
-            #     pos_hint: {'center_x': 0.25, 'y': 0}
-            #     play:True
-                
             TextInput:
                 id: ID
                 hint_text: "ID"
@@ -165,14 +161,6 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down: 'UI/button_down.png'
                 on_release: root.fun()
-               
-#           Button:
-#               text: 'Return'
-#               size_hint: (0.1, 0.1)
-#               pos_hint: {'center_x': 0.1, 'y': 0.02}
-#               background_normal: 'UI/button_normal.png'
-#               background_down: 'UI/button_down.png'
-#               on_release: root.manager.current = 'mainAd'
 
 <QueryAdScreen>:
     name: 'queryAd'
@@ -259,13 +247,6 @@ Builder.load_string("""
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
             
-            # Spinner:
-            #     text: '2018'
-            #     values=('2018', '2017', '2016', '2015')
-            #     size_hint: (0.2, 0.04)
-            #     pos_hint: {'center_x': 0.3, 'y': 0.73}
-            #     # text=show_selected_value
-
             TextInput:                       #选择框
                 id: password
                 hint_text: "Password"
@@ -412,30 +393,36 @@ class ListViewModal(ModalView):
 
 
 class KivyCamera(Image):
+    capturing = False
+
     def __init__(self, fps, id):
+        self.x = -300
+        self.y = 0
+        self.size = (100, 100)
         super(KivyCamera, self).__init__()
-        self.capture = cv2.VideoCapture(0)
-        self.pList = []
-        self.i = 0
+
         self.classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
         self.path = "../TrainImage/" + id
         if not os.path.exists(self.path):
             os.makedirs(self.path)
+
+        KivyCamera.capturing = True
+        self.capture = cv2.VideoCapture(0)
+        self.index = 0
         Clock.schedule_interval(self.update, 1.0 / fps)
 
-    def update(self, dt):
+    def update(self,dt):
         ret, frame = self.capture.read()
         if ret:
-            if (self.i < 400):
-                faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(80, 80))
+            if (self.index < 400):
+                faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(120, 120))
                 for (x, y, w, h) in faces:
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     face = frame[y:y + h, x:x + w]
                     face = cv2.resize(face, (64, 64))
-                    self.pList.append(face)
-                    cv2.imwrite(self.path + "/%d.png" % self.i,
+                    cv2.imwrite(self.path + "/%d.png" % self.index,
                                 imgCollection.relight(face, np.random.uniform(0.5, 1.5)))
-                    self.i += 1
+                    self.index += 1
                 # convert it to texture
                 buf1 = cv2.flip(frame, 0)
                 buf = buf1.tostring()
@@ -443,10 +430,10 @@ class KivyCamera(Image):
                 image_texture.blit_buffer(buf, colorfmt='bgr', bufferfmt='ubyte')
                 # display image from the texture
                 self.texture = image_texture
-
-        else:
-            self.parent.remove_widget(self)
-            self.capture.release()
+            else:
+                self.parent.remove_widget(self)
+                self.capture.release()
+                KivyCamera.capturing = False
 
 
 # class YearSpinner(Spinner):
@@ -472,8 +459,11 @@ class InputAdScreen(Screen):
         self.manager.transition = SlideTransition(direction="left")
 
     def fun(self):
-        camera = KivyCamera(144, "100000")
-        self.add_widget(camera)
+        if not KivyCamera.capturing:
+            id = self.ids["ID"].text
+            if not id == "":
+                camera = KivyCamera(144, id)
+                self.add_widget(camera)
 
 
 class QueryAdScreen(Screen):
