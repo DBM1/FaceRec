@@ -5,7 +5,7 @@ from kivy.config import Config
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
-
+from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.modalview import ModalView
 
 PORT = 5920
@@ -83,7 +83,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.82, 'y': 0.52}
                 background_normal: 'UI/mainEm-query.png'
                 background_down: 'UI/mainEm-query-down.png'
-                on_release: root.manager.current = 'queryEm'
+                on_release:root.manager.current = 'queryEm'
 
             Button:
                 size_hint: (0.29, 0.15)
@@ -352,12 +352,16 @@ class MainEmScreen(Screen):
 
 class QueryEmScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class SettingsEmScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class EmployeeApp(App):

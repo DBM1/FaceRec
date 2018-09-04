@@ -10,6 +10,8 @@ from kivy.graphics.texture import Texture
 import cv2
 from kivy.uix.modalview import ModalView
 from kivy.core.window import Window
+from kivy.uix.spinner import Spinner
+from kivy.uix.screenmanager import SlideTransition
 
 
 PORT = 5920
@@ -252,6 +254,13 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.3, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
+            
+            # Spinner:
+            #     text: '2018'
+            #     values=('2018', '2017', '2016', '2015')
+            #     size_hint: (0.2, 0.04)
+            #     pos_hint: {'center_x': 0.3, 'y': 0.73}
+            #     # text=show_selected_value
 
             TextInput:                       #选择框
                 id: password
@@ -323,7 +332,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.66, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                #on_release: root.manager.current = 'queryAd'
+                # on_release: root.manager.current = 'queryAd'
 
 
 <AccountingAdScreen>:
@@ -428,6 +437,13 @@ class CamApp(App):
         self.capture.release()
 
 
+# class YearSpinner(Spinner):
+#     def show_selected_value(self, text):
+#         print('The spinner', self, 'have text', text)
+#
+#     bind(text=show_selected_value)
+
+
 class ScreenManager(ScreenManager):
     pass
 
@@ -438,22 +454,30 @@ class MainAdScreen(Screen):
 
 class InputAdScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class QueryAdScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class QueryAdEmScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "queryAd"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class AccountingAdScreen(Screen):
     def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
+        self.manager.transition = SlideTransition(direction="left")
 
 
 class SuperAdministerApp(App):
