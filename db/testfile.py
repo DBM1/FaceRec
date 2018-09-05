@@ -4,7 +4,16 @@ import datetime
 time=datetime.datetime.now()
 time=str(time)[0:19]
 #DbOp.add_record_info("000002","2018-08-29 13:48:34")
-print(DbOp.am_state("111111","2018-08-31"))
+# print(DbOp.am_state("111111","2018-08-31"))
+
+
+DbOp.get_except_record("2018-08")
+
+
+
+
+
+
 
 # import calendar
 # str="09"

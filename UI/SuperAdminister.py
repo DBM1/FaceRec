@@ -1,7 +1,6 @@
 # coding=utf-8
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.config import Config
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.listview import ListView
@@ -13,10 +12,15 @@ from kivy.core.window import Window
 from kivy.uix.spinner import Spinner
 from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.floatlayout import FloatLayout
-import time
 from Collection import imgCollection
 import os
 import numpy as np
+from Clients import EmpClient
+from kivy.uix.label import Label
+import time
+import re
+from kivy.uix.gridlayout import GridLayout
+import xlwt
 
 PORT = 5920
 
@@ -29,13 +33,8 @@ Builder.load_string("""
 <BoxLayout>:
     padding: 10
     spacing: 10
-
 <GridLayout>:
-    rows: 2
-    cols: 2
-    spacing: 10
-    row_default_height: 90
-    row_force_default: True
+    row_default_height : 10
 
 <Label>:
     font_size: 15
@@ -44,7 +43,6 @@ Builder.load_string("""
 <Button>:
     font_name:'UI/droid.ttf'
     font_size: 18
-    font_color:0,0,0
     height: 90
     size_hint: (1, None)
     border: (2, 2, 2, 2)
@@ -54,24 +52,6 @@ Builder.load_string("""
     multiline: False
     padding: [10, 0.5 * (self.height - self.line_height)]
     font_name:'UI/droid.ttf'
-    
-<ListViewModal>:
-    size_hint: None, None
-    ListView:
-        size_hint: .9,.9
-        #item_strings: [str(index) for index in range(100)]
-        #adapter:
-            #sla.SimpleListAdapter(
-            #data=["Item #{0}".format(i) for i in range(100)],
-            #cls=label.Label)
-
-<ScrollView>:
-    canvas.before:
-        Color:
-            rgb: 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
             
 <ScreenManager>:
     MainAdScreen
@@ -176,7 +156,9 @@ Builder.load_string("""
                 source: "UI/QueryAd-back.png"
 
         FloatLayout:
-            ListViewModal:
+            ListView:
+                id : lists
+                item_strings: ["?????????"]
                 pos_hint: {'center_x': 0.39, 'y': 0.04}
                 size_hint: (0.65, 0.65)
             Button:
@@ -185,7 +167,8 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.1, 'y': 0.72}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                on_release: root.manager.current = 'queryAdEm'
+                on_release: root.fun()
+                # on_release: root.manager.current = 'queryAdEm'
 
             TextInput:
                 id: ID
@@ -196,8 +179,8 @@ Builder.load_string("""
                 background_active: 'UI/white.png'
 
             TextInput:
-                id: password
-                hint_text: "Password"
+                id: name
+                hint_text: "Name"
                 size_hint: (0.18, 0.05)
                 pos_hint: {'center_x': 0.62, 'y': 0.72}
                 background_normal: 'UI/input_line.png'
@@ -217,7 +200,7 @@ Builder.load_string("""
                 source: "UI/QueryAd-back.png"
 
         FloatLayout:
-            ListViewModal:
+            ListView:
                 pos_hint: {'center_x': 0.39, 'y': 0.1}
                 size_hint: (0.63, 0.61)
                 
@@ -327,14 +310,15 @@ Builder.load_string("""
 
         canvas.before:
             Color:
-                rgba: 1, 1, 1, 1
+                rgba: 0.5, 0.5, 0.5, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
                 source: "UI/AccountingAd-back.png"
 
         FloatLayout:
-            ListViewModal:
+            ListView:
+                id: list
                 size_hint: (0.5, 0.75)
                 pos_hint: {'center_x': 0.668, 'y': 0.11}
                 
@@ -346,16 +330,16 @@ Builder.load_string("""
             
 
             TextInput:                       #选择框
-                id: ID
-                hint_text: "ID"
+                id: year
+                hint_text: "Year"
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.62, 'y': 0.88}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
             TextInput:                       #选择框
-                id: password
-                hint_text: "Password"
+                id: month
+                hint_text: "Month"
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.82, 'y': 0.88}
                 background_normal: 'UI/input_line.png'
@@ -381,15 +365,13 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.85, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                #on_release: root.manager.current = 'queryAd'
+                on_release: root.fun()
+                # on_release: root.manager.current = 'queryAd'
 
 
 """)
 
-
-class ListViewModal(ModalView):
-    def __init__(self, **kwargs):
-        super(ListViewModal, self).__init__(**kwargs)
+empclient = EmpClient.EmpClient()
 
 
 class KivyCamera(Image):
@@ -411,7 +393,7 @@ class KivyCamera(Image):
         self.index = 0
         Clock.schedule_interval(self.update, 1.0 / fps)
 
-    def update(self,dt):
+    def update(self, dt):
         ret, frame = self.capture.read()
         if ret:
             if (self.index < 400):
@@ -461,9 +443,16 @@ class InputAdScreen(Screen):
     def fun(self):
         if not KivyCamera.capturing:
             id = self.ids["ID"].text
-            if not id == "":
-                camera = KivyCamera(144, id)
-                self.add_widget(camera)
+            name = self.ids["name"].text
+            department = self.ids["apartment"].text
+            # if not id == "":
+            #     camera = KivyCamera(144, id)
+            #     self.add_widget(camera)
+            if (empclient.add_emp_info(id, name, department, "None")):
+                pass
+
+
+#            异常操作
 
 
 class QueryAdScreen(Screen):
@@ -472,12 +461,22 @@ class QueryAdScreen(Screen):
         self.manager.current = "mainAd"
         self.manager.transition = SlideTransition(direction="left")
 
+    def fun(self):
+        id = self.ids["ID"].text
+        name = self.ids["name"].text
+        recordTuple = ""
+        if id == "":
+            if not name == "":
+                recordTuple = empclient.get_info_by_name(name)
+        else:
+            recordTuple = empclient.get_info(id)
+        # 显示信息
+
 
 class QueryAdEmScreen(Screen):
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "queryAd"
-        self.manager.transition = SlideTransition(direction="left")
 
 
 class AccountingAdScreen(Screen):
@@ -485,6 +484,32 @@ class AccountingAdScreen(Screen):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
         self.manager.transition = SlideTransition(direction="left")
+
+    def fun(self):
+        year = self.ids["year"].text
+        month = self.ids["month"].text
+        date = year + "-" + month
+        receive = empclient.get_except_record(date)
+        par = r'\((.*)\)'
+        receive = receive.replace("\'", '')
+        records = re.findall(par, receive)
+        records = records[0].split(",")
+        records = np.array(records).reshape(len(records) // 4, 4)
+        showList = []
+        for i in range(records.shape[0]):
+            showList.append("")
+            for j in range(records.shape[1]):
+                showList[i] += records[i][j] + "    "
+        self.ids["late"].text = str(records.shape[0])
+        self.ids["list"].item_strings = showList
+        # wbk = xlwt.Workbook()
+        # sheet = wbk.add_sheet("sheet1")
+        # for i in range(records.shape[0]):
+        #     for j in range(records.shape[1]):
+        #         sheet.write(i, j, records[i][j])
+        # wbk.save("Records.xls")
+
+#        处理records
 
 
 class SuperAdministerApp(App):

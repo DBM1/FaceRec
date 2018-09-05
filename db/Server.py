@@ -25,9 +25,9 @@ def get_info(info):
 
 
 def get_info_by_name(info):
-    emp_name=info[1]
-    result=DbOp.get_info_by_name(emp_name)
-    return  result
+    emp_name = info[1]
+    result = DbOp.get_info_by_name(emp_name)
+    return result
 
 
 def get_record_and_state(info):
@@ -46,6 +46,19 @@ def add_emp_info(info):
     return result
 
 
+def get_info_by_name(info):
+    emp_name = info[1]
+    result = DbOp.get_info_by_name(emp_name)
+    return result
+
+
+def get_except_record(info):
+    time = info[1]
+    num,result_record = DbOp.get_except_record(time)
+    result=str(num)+str(result_record)
+    return result
+
+
 class FaceProServer(socketserver.BaseRequestHandler):
     def handle(self):
         conn = self.request
@@ -55,7 +68,6 @@ class FaceProServer(socketserver.BaseRequestHandler):
         try:
             while flag:
                 info = conn.recv(4096).decode()
-                print(info)
                 info = tuple(info.split(","))
                 result = func[info[0]](info)
                 conn.send(result.encode())
@@ -71,6 +83,7 @@ if __name__ == "__main__":
     server_port = int(cf.get("Server", "port"))
 
     func = {"login": login, "change_psw": change_psw, "get_info": get_info, "get_record": get_record_and_state,
-            "add_emp_info": add_emp_info}
+            "add_emp_info": add_emp_info, "get_info_by_name": get_info_by_name, "get_except_record": get_except_record
+            }
 
     socketserver.ThreadingTCPServer((server_host, server_port), FaceProServer).serve_forever()
