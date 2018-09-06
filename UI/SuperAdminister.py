@@ -1,35 +1,24 @@
 # coding=utf-8
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.core.window import Window
+from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
+
+from Collection import imgCollection
 from kivy.uix.image import Image
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.listview import ListView
 from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 import cv2
-from kivy.uix.modalview import ModalView
-from kivy.core.window import Window
-from kivy.uix.spinner import Spinner
-from kivy.uix.screenmanager import SlideTransition
-from kivy.uix.floatlayout import FloatLayout
-from Collection import imgCollection
-import os
-import numpy as np
+
 from Clients import EmpClient
-from kivy.uix.label import Label
-import time
+import numpy as np
+import os
 import re
-from kivy.uix.gridlayout import GridLayout
 import xlwt
 
 PORT = 5920
 
 Builder.load_string("""
-#:import C kivy.utils.get_color_from_hex
-#:import label kivy.uix.label
-#:import sla kivy.adapters.simplelistadapter
-<KivyCamera>
-
 <BoxLayout>:
     padding: 10
     spacing: 10
@@ -54,12 +43,14 @@ Builder.load_string("""
     font_name:'UI/droid.ttf'
             
 <ScreenManager>:
+    LoginScreen
     MainAdScreen
     InputAdScreen
     QueryAdScreen
     QueryAdEmScreen
     AccountingAdScreen
-    
+    SettingsEmScreen
+
 <MainAdScreen>:
     id:s1
     name: 'mainAd'
@@ -95,6 +86,137 @@ Builder.load_string("""
                 background_normal: 'UI/mainAd-account2.png'
                 background_down: 'UI/mainAd-account-down2.png'
                 on_release: root.manager.current = 'accountingAd'
+                
+            Button:
+                size_hint: (0.29, 0.15)
+                pos_hint: {'center_x': 0.82, 'y': 0.04}
+                background_normal: 'UI/mainEm-settings.png'
+                background_down:'UI/mainEm-settings-down.png'
+                on_release: root.manager.current = 'settingsEm'
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "UI/Login-back.png"
+
+        FloatLayout:
+            TextInput:
+                id: ID
+                hint_text: "ID"
+                text: "000001"
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.60}               #0.81   0.65
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+
+            TextInput:
+                id: password
+                hint_text: "Password"
+                password: True
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.48}
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+                
+            Label:
+                id: boarder
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.36}
+
+            Button:
+                text:'Login'
+                size_hint: (0.15, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.2}
+                background_normal: 'UI/button_normal.png'
+                background_down: 'UI/button_down.png'
+                on_release:root.Login()
+
+<SettingsEmScreen>:
+    id:Setting
+    name: 'settingsEm'
+    BoxLayout:
+        orientation: 'vertical'
+
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "UI/settingsEm-back.png"
+
+        FloatLayout:
+            Label:
+                font_size:20
+                text: '原密码:'
+                size_hint: (0.15, 0.04)
+                pos_hint: {'center_x': 0.3, 'y': 0.5}
+
+            TextInput:                       
+                id: previousPass
+                size_hint: (0.32, 0.05)
+                pos_hint: {'center_x': 0.57, 'y': 0.5}
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+
+            Label:
+                font_size:20
+                text: '新密码:'
+                size_hint: (0.15, 0.04)
+                pos_hint: {'center_x': 0.3, 'y': 0.4}
+
+            TextInput:                       
+                id: newPass
+                password: True
+                size_hint: (0.32, 0.05)
+                pos_hint: {'center_x': 0.57, 'y': 0.4}
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+
+            Label:
+                font_size:20
+                text: '确认新密码:'
+                size_hint: (0.15, 0.04)
+                pos_hint: {'center_x': 0.3, 'y': 0.3}
+
+            TextInput:                       
+                id: idetiNewPass
+                password: True
+                size_hint: (0.32, 0.05)
+                pos_hint: {'center_x': 0.57, 'y': 0.3}
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+
+            Label:                       
+                id: code
+                size_hint: (0.2, 0.05)
+                pos_hint: {'center_x': 0.57, 'y': 0.2}
+                # background_normal: 'UI/input_line.png'
+                # background_active: 'UI/white.png'
+                
+            Image:
+                size_hint: (0.18, 0.1)
+                pos_hint: {'center_x': 0.47, 'y': 0.07}
+
+            Button:
+                text: '确认修改'
+                size_hint: (0.15, 0.06)
+                pos_hint: {'center_x': 0.80, 'y': 0.06}
+                background_normal: 'UI/button_normal.png'
+                background_down:'UI/button_down.png'
+                on_release: root.ChangeInfo()
+
+
 
 <InputAdScreen>:
     name: 'inputAd'
@@ -200,15 +322,13 @@ Builder.load_string("""
 
         FloatLayout:
             ListView:
+                id:list
                 pos_hint: {'center_x': 0.39, 'y': 0.1}
                 size_hint: (0.63, 0.61)
-                
-            Image:
-                size_hint: (0.1, 0.1)
-                pos_hint:{'center_x': 0.82, 'y': 0.85}
-                source: 'UI/icon.png'
+                item_strings: 
                 
             Label:
+                id:name
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
@@ -216,22 +336,22 @@ Builder.load_string("""
                 
             Label:
                 font_size:20
-                text: '选择日期:'
+                text: '输入日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.11, 'y': 0.73}
             
 
             TextInput:                       #选择框
-                id: ID
-                hint_text: "ID"
+                id: Year
+                hint_text: "Year"
                 size_hint: (0.2, 0.04)
                 pos_hint: {'center_x': 0.3, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-            
+
             TextInput:                       #选择框
-                id: password
-                hint_text: "Password"
+                id: Month
+                hint_text: "Month"
                 size_hint: (0.2, 0.04)
                 pos_hint: {'center_x': 0.56, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
@@ -299,8 +419,15 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.66, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                # on_release: root.manager.current = 'queryAd'
-
+                on_release: root.export()
+                
+            Button:
+                text: '查询'
+                size_hint: (0.10, 0.04)
+                pos_hint: {'center_x': 0.8, 'y': 0.04}
+                background_normal: 'UI/button_normal.png'
+                background_down:'UI/button_down.png'
+                on_release: root.Query()
 
 <AccountingAdScreen>:
     name: 'accountingAd'
@@ -382,7 +509,7 @@ class KivyCamera(Image):
         self.size = (100, 100)
         super(KivyCamera, self).__init__()
 
-        self.classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+        self.classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
         self.path = "../TrainImage/" + id
         if not os.path.exists(self.path):
             os.makedirs(self.path)
@@ -396,7 +523,7 @@ class KivyCamera(Image):
         ret, frame = self.capture.read()
         if ret:
             if (self.index < 400):
-                faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(120, 120))
+                faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(150, 150))
                 for (x, y, w, h) in faces:
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                     face = frame[y:y + h, x:x + w]
@@ -417,13 +544,6 @@ class KivyCamera(Image):
                 KivyCamera.capturing = False
 
 
-# class YearSpinner(Spinner):
-#     def show_selected_value(self, text):
-#         print('The spinner', self, 'have text', text)
-#
-#     bind(text=show_selected_value)
-
-
 class ScreenManager(ScreenManager):
     pass
 
@@ -432,8 +552,37 @@ class MainAdScreen(Screen):
     pass
 
 
-class InputAdScreen(Screen):
+class LoginScreen(Screen):
+    def Login(self):
+        id = self.ids.ID.text
+        psw = self.ids.password.text
+        res = empclient.login(emp_id=id, psw=psw)
+        if (res == 'success'):
+            self.manager.current = 'mainAd'
+        elif (res == 'no such id'):
+            self.ids.boarder.text = "no such id"
+        elif (res == 'wrong password'):
+            self.ids.boarder.text = 'wrong password'
 
+
+class SettingsEmScreen(Screen):
+    def on_touch_move(self, touch):
+        self.manager.transition = SlideTransition(direction="right")
+        self.manager.current = "mainAd"
+        self.manager.transition = SlideTransition(direction="left")
+
+    def ChangeInfo(self):
+        ori_psw = self.ids.previousPass.text
+        new_psw = self.ids.newPass.text
+        iden_psw = self.ids.idetiNewPass.text
+        if (new_psw == iden_psw):
+            empclient.change_psw(ori_psw, new_psw)
+            self.ids.code.text = "密码修改成功"
+        else:
+            self.ids.code.text = '两次密码不一致'
+
+
+class InputAdScreen(Screen):
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
@@ -444,17 +593,18 @@ class InputAdScreen(Screen):
             id = self.ids["ID"].text
             name = self.ids["name"].text
             department = self.ids["apartment"].text
-            # if not id == "":
-            #     camera = KivyCamera(144, id)
-            #     self.add_widget(camera)
+            if not id == "":
+                camera = KivyCamera(144, id)
+                self.add_widget(camera)
             if (empclient.add_emp_info(id, name, department, "None")):
-                pass
-
-
-#            异常操作
+                print("Adding employee information successful!")
+            else:
+                print("Fail to add employee information!")
 
 
 class QueryAdScreen(Screen):
+    recordTuple = ""
+
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
@@ -464,26 +614,63 @@ class QueryAdScreen(Screen):
         id = self.ids["ID"].text
         name = self.ids["name"].text
         showList = []
-        recordTuple = ""
         if id == "":
             if not name == "":
-                recordTuple = empclient.get_info_by_name(name)
+                QueryAdScreen.recordTuple = empclient.get_info_by_name(name)
         else:
-            recordTuple = empclient.get_info(id)
-        if not recordTuple == "":
-            print(recordTuple)
-            len1 = len(recordTuple)
+            QueryAdScreen.recordTuple = empclient.get_info(id)
+        if not QueryAdScreen.recordTuple == "":
+            len1 = len(QueryAdScreen.recordTuple)
             for i in range(len1 // 5):
-                record = recordTuple[0 + 5 * i] + "    " + recordTuple[1 + 5 * i] + "    " + recordTuple[2 + 5 * i]
+                record = QueryAdScreen.recordTuple[0 + 5 * i] + "    " + QueryAdScreen.recordTuple[1 + 5 * i] + "    " + \
+                         QueryAdScreen.recordTuple[2 + 5 * i]
                 showList.append(record)
             list = self.ids["lists"]
             list.item_strings = showList
+            if len1 == 5:
+                self.manager.current = 'queryAdEm'
 
 
 class QueryAdEmScreen(Screen):
+    record = []
+    Time = ""
+
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "queryAd"
+
+    def Query(self):
+        year = self.ids.Year.text
+        month = self.ids.Month.text
+        time = year + '-' + month
+        QueryAdEmScreen.Time = time
+        res = empclient.get_record_and_state(time, QueryAdScreen.recordTuple[0])
+        r = res[1:-1]
+        comp = re.split(r"[(](.*?)[)]", r)
+        date = re.findall('\d+', comp[-1])
+        self.ids.late.text = date[1]
+        self.ids.off.text = date[3]
+        self.ids.early.text = date[2]
+        self.ids.normal.text = date[0]
+        record = QueryAdEmScreen.record
+        for i in range(len(comp)):
+            if i % 2 == 1:
+                comp[i] = comp[i].replace("'", '')
+                record.append(comp[i])
+        self.ids.list.item_strings = record
+        info = empclient.get_info(QueryAdScreen.recordTuple[0])
+        self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
+
+    def export(self):
+        record = QueryAdEmScreen.record
+        wbk = xlwt.Workbook()
+        sheet = wbk.add_sheet("sheet1")
+        for i in range(len(record)):
+            item = record[i].split(',')
+            for j in range(len(item)):
+                sheet.write(i, j, item[j])
+        if not record == []:
+            wbk.save("../ExportFile/" + QueryAdScreen.recordTuple[0] + '-' + QueryAdEmScreen.Time + ".xls")
 
 
 class AccountingAdScreen(Screen):
@@ -509,15 +696,12 @@ class AccountingAdScreen(Screen):
                 showList[i] += records[i][j] + "    "
         self.ids["late"].text = str(records.shape[0])
         self.ids["list"].item_strings = showList
-        # wbk = xlwt.Workbook()
-        # sheet = wbk.add_sheet("sheet1")
-        # for i in range(records.shape[0]):
-        #     for j in range(records.shape[1]):
-        #         sheet.write(i, j, records[i][j])
-        # wbk.save("Records.xls")
-
-
-#        处理records
+        wbk = xlwt.Workbook()
+        sheet = wbk.add_sheet("sheet1")
+        for i in range(records.shape[0]):
+            for j in range(records.shape[1]):
+                sheet.write(i, j, records[i][j])
+        wbk.save("../ExportFile/" + "Records-" + date + ".xls")
 
 
 class SuperAdministerApp(App):

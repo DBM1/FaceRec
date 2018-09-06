@@ -1,0 +1,13 @@
+2018-09-06 10:57:52,316 - DataBase.py[line:23] - INFO: database class is creating...
+2018-09-06 10:57:52,504 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-06 10:58:00,725 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-06 10:58:00,783 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-06 10:58:22,299 - DataBase.py[line:67] - INFO: INSERT INTO `facepro`.`empinfo` (`Emp_id`, `Emp_name`, `Emp_department`, `password`, `Emp_photo`) VALUES ('000000', '', '', '000000', 'None')
+2018-09-06 10:59:10,896 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-06 10:59:10,952 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-06 10:59:17,834 - DataBase.py[line:67] - INFO: INSERT INTO `facepro`.`empinfo` (`Emp_id`, `Emp_name`, `Emp_department`, `password`, `Emp_photo`) VALUES ('000000', '', '', '000000', 'None')
+2018-09-06 10:59:17,873 - DataBase.py[line:77] - ERROR: update database exception, (1062, "Duplicate entry '000000' for key 'PRIMARY'")
+2018-09-06 10:59:52,278 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-06 10:59:52,326 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-06 11:00:06,179 - DataBase.py[line:67] - INFO: INSERT INTO `facepro`.`empinfo` (`Emp_id`, `Emp_name`, `Emp_department`, `password`, `Emp_photo`) VALUES ('000000', '', '', '000000', 'None')
+2018-09-06 11:00:06,234 - DataBase.py[line:77] - ERROR: update database exception, (1062, "Duplicate entry '000000' for key 'PRIMARY'")

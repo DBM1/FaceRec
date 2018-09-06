@@ -152,7 +152,7 @@ def impimg():
 
 def rec(tfsavepath, classnum):
     cap = cv2.VideoCapture(0)
-    classifier = cv2.CascadeClassifier('haarcascade_frontalface_alt2.xml')
+    classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
     output = cnnlayer(classnum)
     path = "../TrainImage"
     filename = os.listdir(path)
