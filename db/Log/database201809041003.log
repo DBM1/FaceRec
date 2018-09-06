@@ -1,8 +1,0 @@
-2018-09-04 10:03:37,342 - DataBase.py[line:23] - INFO: database class is creating...
-2018-09-04 10:03:37,362 - DataBase.py[line:51] - INFO: database is connecting...
-2018-09-04 10:03:37,363 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111 and time like '2018-08-29%'
-2018-09-04 10:03:37,364 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111
-2018-09-04 10:03:37,364 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111 and time like '2018-08-29%'
-2018-09-04 10:03:37,365 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111
-2018-09-04 10:03:37,367 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111
-2018-09-04 10:03:37,368 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=111111
