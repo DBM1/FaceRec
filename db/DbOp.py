@@ -326,8 +326,11 @@ def change_psw(emp_id, ori_psw, new_psw):
 
 def get_info_by_name(emp_name):
     result = db.query("select * from empinfo where Emp_name='" + emp_name+"'")
-    result = result[0]
-    re = result[0] + "," + result[1] + "," + result[2] + "," + result[3] + "," + result[4]
+    if result==():
+        return "None"
+    re = ""
+    for i in result:
+        re += i[0] + "," + i[1] + "," + i[2] + "," + i[3] + "," + i[4] + ","
     return re
 
 

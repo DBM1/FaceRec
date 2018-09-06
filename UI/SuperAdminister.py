@@ -34,7 +34,7 @@ Builder.load_string("""
     padding: 10
     spacing: 10
 <GridLayout>:
-    row_default_height : 10
+    row_default_height : 30
 
 <Label>:
     font_size: 15
@@ -158,7 +158,6 @@ Builder.load_string("""
         FloatLayout:
             ListView:
                 id : lists
-                item_strings: ["?????????"]
                 pos_hint: {'center_x': 0.39, 'y': 0.04}
                 size_hint: (0.65, 0.65)
             Button:
@@ -310,7 +309,7 @@ Builder.load_string("""
 
         canvas.before:
             Color:
-                rgba: 0.5, 0.5, 0.5, 1
+                rgba: 1, 1, 1, 1
             Rectangle:
                 pos: self.pos
                 size: self.size
@@ -464,13 +463,21 @@ class QueryAdScreen(Screen):
     def fun(self):
         id = self.ids["ID"].text
         name = self.ids["name"].text
+        showList = []
         recordTuple = ""
         if id == "":
             if not name == "":
                 recordTuple = empclient.get_info_by_name(name)
         else:
             recordTuple = empclient.get_info(id)
-        # 显示信息
+        if not recordTuple == "":
+            print(recordTuple)
+            len1 = len(recordTuple)
+            for i in range(len1 // 5):
+                record = recordTuple[0 + 5 * i] + "    " + recordTuple[1 + 5 * i] + "    " + recordTuple[2 + 5 * i]
+                showList.append(record)
+            list = self.ids["lists"]
+            list.item_strings = showList
 
 
 class QueryAdEmScreen(Screen):
@@ -508,6 +515,7 @@ class AccountingAdScreen(Screen):
         #     for j in range(records.shape[1]):
         #         sheet.write(i, j, records[i][j])
         # wbk.save("Records.xls")
+
 
 #        处理records
 
