@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import os
 import cv2
+import shutil
 
 x_data = tf.placeholder(tf.float32, [None, 64, 64, 3])
 y_data = tf.placeholder(tf.float32, [None, None])
@@ -72,22 +73,22 @@ def train(trainX, trainY, tfSavePath):
     trainStep = tf.train.AdamOptimizer(0.001).minimize(crossEntropy)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(out, 1), tf.argmax(y_data, 1)), tf.float32))
 
+    length = trainY.shape[0]
     saver = tf.train.Saver()
 
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         trainXholder = trainX
         trainYholder = trainY
-        trainX = np.vstack((trainXholder[0:300], trainXholder[400:700], trainXholder[800:1100], trainXholder[1200:1500],
-                            trainXholder[1600:1900]))
-        testX = np.vstack(
-            (trainXholder[300:400], trainXholder[700:800], trainXholder[1100:1200], trainXholder[1500:1600],
-             trainXholder[1900:2000]))
-        trainY = np.vstack((trainYholder[0:300], trainYholder[400:700], trainYholder[800:1100], trainYholder[1200:1500],
-                            trainYholder[1600:1900]))
-        testY = np.vstack(
-            (trainYholder[300:400], trainYholder[700:800], trainYholder[1100:1200], trainYholder[1500:1600],
-             trainYholder[1900:2000]))
+        testX = None
+        testY = None
+
+        for cutNum in range(length // 400):
+            trainX = np.vstack((trainXholder[400 * cutNum:400 * cutNum + 300]))
+            testX = np.vstack((trainXholder[400 * cutNum + 300:400 * (cutNum + 1)]))
+            trainY = np.vstack((trainYholder[400 * cutNum:400 * cutNum + 300]))
+            testY = np.vstack((trainYholder[400 * cutNum + 300:400 * (cutNum + 1)]))
+
         batchSize = 10
         numBatch = trainY.shape[0] // batchSize
         for n in range(20):
@@ -136,16 +137,21 @@ def makedir(*args):
 def impimg():
     path = "../TrainImage"
     filename = os.listdir(path)
-    print(filename)
     length = len(filename)
     imgList = []
     labelList = np.zeros([400 * length, length], int)
     index = 0
     for name in filename:
-        for i in range(400):
-            imgList.append(cv2.imread("../TrainImage/%s/%d.png" % (name, i)))
-            labelList[400 * index + i][index] = 1
-        index += 1
+        pngPath = path + '/' + name
+        pngList = os.listdir(pngPath)
+        if len(pngList) == 400:
+            for i in range(400):
+                imgList.append(cv2.imread("../TrainImage/%s/%d.png" % (name, i)))
+                labelList[400 * index + i][index] = 1
+            index += 1
+        else:
+            print("Incorrect PNG number:" + pngPath)
+            shutil.rmtree(pngPath)
     imgList = np.array(imgList)
     return imgList, labelList
 
@@ -156,7 +162,6 @@ def rec(tfsavepath, classnum):
     output = cnnlayer(classnum)
     path = "../TrainImage"
     filename = os.listdir(path)
-    print(filename)
     saver = tf.train.Saver()
     jugement = np.zeros([classnum])
     i = 0
@@ -164,14 +169,15 @@ def rec(tfsavepath, classnum):
         saver.restore(sess, tfsavepath)
         while 1:
             ret, img = cap.read()
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            faces = classifier.detectMultiScale(gray, 1.1, 3, minSize=(120, 120))
+            # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            faces = classifier.detectMultiScale(img, 1.1, 3, minSize=(150, 150))
             for (x, y, w, h) in faces:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 face = img[y:y + h, x:x + w]
                 face = cv2.resize(face, (64, 64))
                 face = np.expand_dims(face, 0)
                 result = sess.run(output, feed_dict={x_data: face, keep_porb1: 1.0, keep_porb2: 1.0})
+                print(result)
                 if i < 100:
                     jugement[[np.argmax(result)]] += 1
                     i += 1
@@ -191,6 +197,6 @@ def rec(tfsavepath, classnum):
         cv2.destroyAllWindows()
 
 
-# trainX, trainY = impimg()
+trainX, trainY = impimg()
 # train(trainX, trainY, "./model/testmodel1")
-rec("./model/testmodel1", 5)
+# rec("./model/testmodel1", 5)
