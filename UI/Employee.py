@@ -7,15 +7,21 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.core.window import Window
 from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.modalview import ModalView
+from Clients import EmpClient as func
+import re
 
+
+emp = func.EmpClient()
 PORT = 5920
 
 Builder.load_string("""
 #:import C kivy.utils.get_color_from_hex
 #:import label kivy.uix.label
 #:import sla kivy.adapters.simplelistadapter
-
+    
 <ScreenManager>:
+    
+    LoginScreen
     MainEmScreen
     QueryEmScreen
     SettingsEmScreen
@@ -25,12 +31,8 @@ Builder.load_string("""
     spacing: 10
 
 <GridLayout>:
-    rows: 2
-    cols: 2
-    spacing: 10
-    row_default_height: 90
-    row_force_default: True
-
+    row_default_height:30
+    
 <Label>:
     font_size: 15
     font_name:'UI/droid.ttf'
@@ -38,7 +40,6 @@ Builder.load_string("""
 <Button>:
     font_name:'UI/droid.ttf'
     font_size: 18
-    font_color:0,0,0
     height: 90
     size_hint: (1, None)
     border: (2, 2, 2, 2)
@@ -49,21 +50,52 @@ Builder.load_string("""
     padding: [10, 0.5 * (self.height - self.line_height)]
     font_name:'UI/droid.ttf'
 
-<ListViewModal>:
-    size_hint: None, None
-    size: 600,360
-    ListView:
-        size_hint: .9,.9
-        #item_strings: [str(index) for index in range(100)]
+            
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
 
-<ScrollView>:
-    canvas.before:
-        Color:
-            rgb: 1, 1, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+                source: "UI/Login-back.png"
 
+        FloatLayout:
+            TextInput:
+                id: ID
+                hint_text: "ID"
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.60}               #0.81   0.65
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+
+            TextInput:
+                id: password
+                hint_text: "Password"
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.48}
+                background_normal: 'UI/input_line.png'
+                background_active: 'UI/white.png'
+                
+            Label:
+                id: boarder
+                font_size: 20
+                size_hint: (0.25, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.36}
+
+            Button:
+                text:'Login'
+                size_hint: (0.15, 1/17)
+                pos_hint: {'center_x': 0.21, 'y': 0.2}
+                background_normal: 'UI/button_normal.png'
+                background_down: 'UI/button_down.png'
+                on_release:root.Login()
+                
 <MainEmScreen>:
     name: 'mainEm'
     BoxLayout:
@@ -90,7 +122,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.82, 'y': 0.28}
                 background_normal: 'UI/mainEm-settings.png'
                 background_down:'UI/mainEm-settings-down.png'
-                on_release: root.manager.current = 'settingsEm'
+                on_release: root.ShiftToSetting()
 
 <QueryEmScreen>:
     name: 'queryEm'
@@ -106,16 +138,19 @@ Builder.load_string("""
                 source: "UI/QueryAd-back.png"
 
         FloatLayout:
-            ListViewModal:
+            ListView:
+                id:list
                 pos_hint: {'center_x': 0.39, 'y': 0.1}
                 size_hint: (0.63, 0.61)
+                item_strings: 
                 
-            Image:
-                size_hint: (0.1, 0.1)
-                pos_hint:{'center_x': 0.82, 'y': 0.85}
-                source: 'UI/icon.png'
+            # Image:
+            #     size_hint: (0.1, 0.1)
+            #     pos_hint:{'center_x': 0.82, 'y': 0.85}
+            #     source: 'UI/icon.png'
                 
             Label:
+                id:name
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
@@ -123,22 +158,22 @@ Builder.load_string("""
                 
             Label:
                 font_size:20
-                text: '选择日期:'
+                text: '输入日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.11, 'y': 0.73}
             
 
             TextInput:                       #选择框
-                id: ID
-                hint_text: "ID"
+                id: Year
+                hint_text: "Year"
                 size_hint: (0.2, 0.04)
                 pos_hint: {'center_x': 0.3, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
             TextInput:                       #选择框
-                id: password
-                hint_text: "Password"
+                id: Month
+                hint_text: "Month"
                 size_hint: (0.2, 0.04)
                 pos_hint: {'center_x': 0.56, 'y': 0.73}
                 background_normal: 'UI/input_line.png'
@@ -207,8 +242,18 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 #on_release: 
+                
+            Button:
+                text: '查询'
+                size_hint: (0.10, 0.04)
+                pos_hint: {'center_x': 0.8, 'y': 0.04}
+                background_normal: 'UI/button_normal.png'
+                background_down:'UI/button_down.png'
+                on_release: root.Query()
+                
 
 <SettingsEmScreen>:
+    id:Setting
     name: 'settingsEm'
     BoxLayout:
         orientation: 'vertical'
@@ -223,10 +268,10 @@ Builder.load_string("""
 
         FloatLayout:
 
-            Image:
-                size_hint: (0.15, 0.15)
-                pos_hint:{'center_x': 0.87, 'y': 0.65}
-                source: 'UI/icon.png'
+            # Image:
+            #     size_hint: (0.15, 0.15)
+            #     pos_hint:{'center_x': 0.87, 'y': 0.65}
+            #     source: 'UI/icon.png'
 
             Label:
                 font_size:20
@@ -309,18 +354,18 @@ Builder.load_string("""
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
 
-            Label:
-                font_size:20
-                text: '验证码:'
-                size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.3, 'y': 0.2}
+            # Label:
+            #     font_size:20
+            #     text: '验证码:'
+            #     size_hint: (0.15, 0.04)
+            #     pos_hint: {'center_x': 0.3, 'y': 0.2}
 
-            TextInput:                       
+            Label:                       
                 id: code
                 size_hint: (0.2, 0.05)
                 pos_hint: {'center_x': 0.57, 'y': 0.2}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
+                # background_normal: 'UI/input_line.png'
+                # background_active: 'UI/white.png'
                 
             Image:
                 size_hint: (0.18, 0.1)
@@ -332,22 +377,35 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.80, 'y': 0.06}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                #on_release: root.manager.current = 'queryAd'
+                on_release: root.ChangeInfo()
 
 """)
-
-
-class ListViewModal(ModalView):
-    def __init__(self, **kwargs):
-        super(ListViewModal, self).__init__(**kwargs)
 
 
 class ScreenManager(ScreenManager):
     pass
 
 
+class LoginScreen(Screen):
+    def Login(self):
+        id = self.ids.ID.text
+        psw = self.ids.password.text
+        res = emp.login(emp_id=id, psw=psw)
+        if(res == 'success'):
+            self.manager.current = 'mainEm'
+        elif(res == 'no such id'):
+            self.ids.boarder.text = "no such id"
+        elif(res == 'wrong password'):
+            self.ids.boarder.text = 'wrong password'
+
 class MainEmScreen(Screen):
-    pass
+    def ShiftToSetting(self):
+        self.manager.current = 'settingsEm'
+        s = self.manager.get_screen('settingsEm')
+        info = emp.get_info()
+        s.ids.ID.text = info[1]
+        s.ids.name.text = info[0]
+        s.ids.apartment.text = info[2]
 
 
 class QueryEmScreen(Screen):
@@ -355,14 +413,41 @@ class QueryEmScreen(Screen):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
         self.manager.transition = SlideTransition(direction="left")
-
+    def Query(self):
+        year = self.ids.Year.text
+        month = self.ids.Month.text
+        time = year + '-' + month
+        res = emp.get_record_and_state(time)
+        r = res[1:-1]
+        comp = re.split(r"[(](.*?)[)]", r)
+        date = re.findall('\d+', comp[-1])
+        self.ids.late.text = date[1]
+        self.ids.off.text = date[3]
+        self.ids.early.text = date[2]
+        self.ids.normal.text = date[0]
+        record = []
+        for i in range(len(comp)):
+            if i%2 == 1:
+                comp[i] = comp[i].replace("'", '')
+                record.append(comp[i])
+        self.ids.list.item_strings = record
+        info = emp.get_info()
+        self.ids.name.text = info[1]+','+info[0]+','+info[2]
 
 class SettingsEmScreen(Screen):
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
         self.manager.transition = SlideTransition(direction="left")
-
+    def ChangeInfo(self):
+        ori_psw = self.ids.previousPass.text
+        new_psw = self.ids.newPass.text
+        iden_psw = self.ids.idetiNewPass.text
+        if(new_psw == iden_psw):
+            emp.change_psw(ori_psw, new_psw)
+            self.ids.code.text = "密码修改成功"
+        else:
+            self.ids.code.text = '两次密码不一致'
 
 class EmployeeApp(App):
     def build(self):
