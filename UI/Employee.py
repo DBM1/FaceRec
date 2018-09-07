@@ -9,7 +9,8 @@ from kivy.uix.screenmanager import SlideTransition
 from kivy.uix.modalview import ModalView
 from Clients import EmpClient as func
 import re
-
+from kivy.uix.popup import Popup
+7
 
 emp = func.EmpClient()
 PORT = 5920
@@ -18,6 +19,14 @@ Builder.load_string("""
 #:import C kivy.utils.get_color_from_hex
 #:import label kivy.uix.label
 #:import sla kivy.adapters.simplelistadapter
+<MyPopup>:
+    size_hint: .3, .3
+    auto_dismiss: False
+    title: 'Hint'
+    Button:
+        id:button
+        text: 'Wrong Password!'
+        on_press: root.dismiss()
     
 <ScreenManager>:
     
@@ -29,9 +38,6 @@ Builder.load_string("""
 <BoxLayout>:
     padding: 10
     spacing: 10
-
-<GridLayout>:
-    row_default_height:30
     
 <Label>:
     font_size: 15
@@ -40,9 +46,10 @@ Builder.load_string("""
 <Button>:
     font_name:'UI/droid.ttf'
     font_size: 18
-    height: 90
     size_hint: (1, None)
     border: (2, 2, 2, 2)
+    background_normal: 'UI/button1.png'
+    background_down: 'UI/button2.png'
 
 <TextInput>:
     font_size: 12
@@ -144,40 +151,40 @@ Builder.load_string("""
                 size_hint: (0.63, 0.61)
                 item_strings: 
                 
-            # Image:
-            #     size_hint: (0.1, 0.1)
-            #     pos_hint:{'center_x': 0.82, 'y': 0.85}
-            #     source: 'UI/icon.png'
-                
             Label:
                 id:name
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
-                text: 'XXX,123456,市场部'
+                text: ' '
                 
             Label:
                 font_size:20
-                text: '输入日期:'
+                text: '选择日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.11, 'y': 0.73}
-            
 
-            TextInput:                       #选择框
-                id: Year
-                hint_text: "Year"
-                size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.3, 'y': 0.73}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
-
-            TextInput:                       #选择框
-                id: Month
-                hint_text: "Month"
-                size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.56, 'y': 0.73}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
+            Spinner:
+                id:Year
+                text: '2018'
+                values: ['2018', '2017', '2016']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.27, 'y': 0.73} 
+            Spinner:
+                id:Month
+                text: '01'
+                values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.45, 'y': 0.73} 
+            Button:
+                text: '查询'
+                size_hint: (0.10, 0.04)
+                pos_hint: {'center_x': 0.66, 'y': 0.73}
+                background_normal: 'UI/button_normal.png'
+                background_down:'UI/button_down.png'
+                on_release: root.Query()
                 
             Label:
                 font_size:14
@@ -242,14 +249,7 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 #on_release: 
-                
-            Button:
-                text: '查询'
-                size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.8, 'y': 0.04}
-                background_normal: 'UI/button_normal.png'
-                background_down:'UI/button_down.png'
-                on_release: root.Query()
+
                 
 
 <SettingsEmScreen>:
@@ -267,11 +267,6 @@ Builder.load_string("""
                 source: "UI/settingsEm-back.png"
 
         FloatLayout:
-
-            # Image:
-            #     size_hint: (0.15, 0.15)
-            #     pos_hint:{'center_x': 0.87, 'y': 0.65}
-            #     source: 'UI/icon.png'
 
             Label:
                 font_size:20
@@ -382,6 +377,11 @@ Builder.load_string("""
 """)
 
 
+class MyPopup(Popup):
+    def modify(self, text):
+        self.ids.button.text = text
+
+
 class ScreenManager(ScreenManager):
     pass
 
@@ -393,10 +393,18 @@ class LoginScreen(Screen):
         res = emp.login(emp_id=id, psw=psw)
         if(res == 'success'):
             self.manager.current = 'mainEm'
-        elif(res == 'no such id'):
-            self.ids.boarder.text = "no such id"
+        elif(res == 'no such id'):                                    #已修改为弹框
+            #self.ids.boarder.text = "no such id"
+            s = 'no such id'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
         elif(res == 'wrong password'):
-            self.ids.boarder.text = 'wrong password'
+            #self.ids.boarder.text = 'wrong password'                                    #已修改为弹框
+            s = 'wrong password'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
 
 class MainEmScreen(Screen):
     def ShiftToSetting(self):
@@ -443,11 +451,19 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if(new_psw == iden_psw):
+        if(new_psw == iden_psw):                                    #已修改为弹框
             emp.change_psw(ori_psw, new_psw)
-            self.ids.code.text = "密码修改成功"
-        else:
-            self.ids.code.text = '两次密码不一致'
+            # self.ids.code.text = "密码修改成功"
+            s = "密码修改成功"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        else:                                                       #已修改为弹框
+            #self.ids.code.text = '两次密码不一致'
+            s = '两次密码不一致'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
 
 class EmployeeApp(App):
     def build(self):

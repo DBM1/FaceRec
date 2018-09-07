@@ -3,7 +3,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
-
+from kivy.uix.popup import Popup
 from Collection import imgCollection
 from kivy.uix.image import Image
 from kivy.clock import Clock
@@ -19,11 +19,18 @@ import xlwt
 PORT = 5920
 
 Builder.load_string("""
+<MyPopup>:
+    size_hint: .3, .3
+    auto_dismiss: False
+    title: 'Hint'
+    Button:
+        id:button
+        text: 'Wrong Password!'
+        on_press: root.dismiss()
+
 <BoxLayout>:
     padding: 10
     spacing: 10
-<GridLayout>:
-    row_default_height : 30
 
 <Label>:
     font_size: 15
@@ -32,9 +39,11 @@ Builder.load_string("""
 <Button>:
     font_name:'UI/droid.ttf'
     font_size: 18
-    height: 90
+    font_color:1,1,0
     size_hint: (1, None)
     border: (2, 2, 2, 2)
+    background_normal: 'UI/button1.png'
+    background_down: 'UI/button2.png'
 
 <TextInput>:
     font_size: 12
@@ -68,30 +77,30 @@ Builder.load_string("""
         FloatLayout:
             Button: 
                 size_hint: (0.29, 0.13)                            #0.28    0.42
-                pos_hint: {'center_x': 0.82, 'y': 0.55}          #0.195   0.171
+                pos_hint: {'center_x': 0.82, 'y': 0.6}          #0.195   0.171
                 background_normal: 'UI/mainAd-luru2.png'
                 background_down: 'UI/mainAd-luru-down2.png'
                 on_release: root.manager.current = 'inputAd'
 
             Button:
                 size_hint: (0.29, 0.13)
-                pos_hint: {'center_x': 0.82, 'y': 0.38}
+                pos_hint: {'center_x': 0.82, 'y': 0.43}
                 background_normal: 'UI/mainAd-query2.png'
                 background_down:'UI/mainAd-query-down2.png'
                 on_release: root.manager.current = 'queryAd'
 
             Button:
                 size_hint: (0.29, 0.13)
-                pos_hint: {'center_x': 0.82, 'y': 0.21}
+                pos_hint: {'center_x': 0.82, 'y': 0.26}
                 background_normal: 'UI/mainAd-account2.png'
                 background_down: 'UI/mainAd-account-down2.png'
                 on_release: root.manager.current = 'accountingAd'
                 
             Button:
-                size_hint: (0.29, 0.15)
-                pos_hint: {'center_x': 0.82, 'y': 0.04}
-                background_normal: 'UI/mainEm-settings.png'
-                background_down:'UI/mainEm-settings-down.png'
+                size_hint: (0.29, 0.13)
+                pos_hint: {'center_x': 0.82, 'y': 0.09}
+                background_normal: 'UI/mainAd-setting.png'
+                background_down:'UI/mainAd-setting-down.png'
                 on_release: root.manager.current = 'settingsEm'
 
 <LoginScreen>:
@@ -332,30 +341,35 @@ Builder.load_string("""
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
-                text: 'XXX,123456,市场部'
+                text: ' '
                 
             Label:
                 font_size:20
-                text: '输入日期:'
+                text: '选择日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.11, 'y': 0.73}
             
-
-            TextInput:                       #选择框
-                id: Year
-                hint_text: "Year"
-                size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.3, 'y': 0.73}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
-
-            TextInput:                       #选择框
-                id: Month
-                hint_text: "Month"
-                size_hint: (0.2, 0.04)
-                pos_hint: {'center_x': 0.56, 'y': 0.73}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
+            Spinner:
+                id:Year
+                text: '2018'
+                values: ['2018', '2017', '2016']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.27, 'y': 0.73} 
+            Spinner:
+                id:Month
+                text: '01'
+                values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.45, 'y': 0.73} 
+            Button:
+                text: '查询'
+                size_hint: (0.10, 0.04)
+                pos_hint: {'center_x': 0.66, 'y': 0.73}
+                background_normal: 'UI/button_normal.png'
+                background_down:'UI/button_down.png'
+                on_release: root.Query()
                 
             Label:
                 font_size:14
@@ -421,13 +435,7 @@ Builder.load_string("""
                 background_down:'UI/button_down.png'
                 on_release: root.export()
                 
-            Button:
-                text: '查询'
-                size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.8, 'y': 0.04}
-                background_normal: 'UI/button_normal.png'
-                background_down:'UI/button_down.png'
-                on_release: root.Query()
+            
 
 <AccountingAdScreen>:
     name: 'accountingAd'
@@ -453,23 +461,21 @@ Builder.load_string("""
                 text: '选择日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.45, 'y': 0.88}
-            
-
-            TextInput:                       #选择框
-                id: year
-                hint_text: "Year"
-                size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.62, 'y': 0.88}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
-
-            TextInput:                       #选择框
-                id: month
-                hint_text: "Month"
-                size_hint: (0.15, 0.04)
-                pos_hint: {'center_x': 0.82, 'y': 0.88}
-                background_normal: 'UI/input_line.png'
-                background_active: 'UI/white.png'
+                
+            Spinner:
+                id:year
+                text: '2018'
+                values: ['2018', '2017', '2016']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.62, 'y': 0.88} 
+            Spinner:
+                id:month
+                text: '01'
+                values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+                size_hint: (None, None)
+                size:(150,34)
+                pos_hint: {'center_x': 0.82, 'y': 0.88} 
                 
             Label:
                 font_size:14
@@ -498,6 +504,11 @@ Builder.load_string("""
 """)
 
 empclient = EmpClient.EmpClient()
+
+
+class MyPopup(Popup):
+    def modify(self, text):
+        self.ids.button.text = text
 
 
 class KivyCamera(Image):
@@ -560,9 +571,17 @@ class LoginScreen(Screen):
         if (res == 'success'):
             self.manager.current = 'mainAd'
         elif (res == 'no such id'):
-            self.ids.boarder.text = "no such id"
-        elif (res == 'wrong password'):
-            self.ids.boarder.text = 'wrong password'
+            # self.ids.boarder.text = "no such id"                                 #已修改为弹框
+            s = 'no such id'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif (res == 'wrong password'):                                    #已修改为弹框
+            #self.ids.boarder.text = 'wrong password'
+            s = 'wrong password'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
 
 
 class SettingsEmScreen(Screen):
@@ -575,11 +594,19 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if (new_psw == iden_psw):
+        if (new_psw == iden_psw):                                                 #已修改为弹框
             empclient.change_psw(ori_psw, new_psw)
-            self.ids.code.text = "密码修改成功"
-        else:
-            self.ids.code.text = '两次密码不一致'
+            # self.ids.code.text = "密码修改成功"
+            s = "密码修改成功"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        else:                                                                    #已修改为弹框
+            #self.ids.code.text = '两次密码不一致'
+            s = '两次密码不一致'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
 
 
 class InputAdScreen(Screen):
