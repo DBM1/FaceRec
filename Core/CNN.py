@@ -80,19 +80,25 @@ def train(trainX, trainY, tfSavePath):
         sess.run(tf.global_variables_initializer())
         trainXholder = trainX
         trainYholder = trainY
-        testX = None
-        testY = None
-
+        testX = []
+        testY = []
+        trainX = []
+        trainY = []
         for cutNum in range(length // 400):
-            trainX = np.vstack((trainXholder[400 * cutNum:400 * cutNum + 300]))
-            testX = np.vstack((trainXholder[400 * cutNum + 300:400 * (cutNum + 1)]))
-            trainY = np.vstack((trainYholder[400 * cutNum:400 * cutNum + 300]))
-            testY = np.vstack((trainYholder[400 * cutNum + 300:400 * (cutNum + 1)]))
+            trainX.append(trainXholder[400 * cutNum:400 * cutNum + 300])
+            testX.append(trainXholder[400 * cutNum + 300:400 * (cutNum + 1)])
+            trainY.append(trainYholder[400 * cutNum:400 * cutNum + 300])
+            testY.append(trainYholder[400 * cutNum + 300:400 * (cutNum + 1)])
+
+        trainX = np.concatenate(trainX, 0)
+        testX = np.concatenate(testX, 0)
+        trainY = np.concatenate(trainY, 0)
+        testY = np.concatenate(testY, 0)
 
         batchSize = 10
         numBatch = trainY.shape[0] // batchSize
         for n in range(20):
-            r = np.random.permutation(len(trainX))
+            r = np.random.permutation(trainX.shape[0])
             trainX = trainX[r, :]
             trainY = trainY[r, :]
             for i in range(numBatch):
@@ -177,7 +183,6 @@ def rec(tfsavepath, classnum):
                 face = cv2.resize(face, (64, 64))
                 face = np.expand_dims(face, 0)
                 result = sess.run(output, feed_dict={x_data: face, keep_porb1: 1.0, keep_porb2: 1.0})
-                print(result)
                 if i < 100:
                     jugement[[np.argmax(result)]] += 1
                     i += 1
@@ -197,6 +202,6 @@ def rec(tfsavepath, classnum):
         cv2.destroyAllWindows()
 
 
-trainX, trainY = impimg()
+# trainX, trainY = impimg()
 # train(trainX, trainY, "./model/testmodel1")
-# rec("./model/testmodel1", 5)
+# rec("./model/testmodel1", 2)
