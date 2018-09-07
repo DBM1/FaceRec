@@ -360,16 +360,16 @@ def get_except_record(time):
                 re = sorted(re)
                 la_rec = look_for(re)
                 if (la_rec == None):
-                    result_record=result_record+(i[0],new_date,i[2],"1")
+                    result_record=result_record+(i[0],new_date,i[2],"旷工")
                     num+=1
                 else:
                     """"""
                     if (la_rec[3] == 0):
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], new_date, i[2], "旷工")
                         num += 1
             else:
                 if (last_rec[1][11:19] < time1 and last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], new_date, i[2], "旷工")
                     num += 1
 
             #print(result_record)
@@ -381,19 +381,19 @@ def get_except_record(time):
                 re = sorted(re)
                 la_rec = look_for(re, time1)
                 if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], i[1], i[2], "迟到")
                     num += 1
                 else:
                     if (la_rec[3] == 1):
                         pass
                     else:
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], i[1], i[2], "迟到")
                         num += 1
             else:
                 if (last_rec[3] == 1):
                     pass
                 else:
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], i[1], i[2], "迟到")
                     num += 1
 
                 # 是否早退
@@ -409,11 +409,11 @@ def get_except_record(time):
                     if (la_rec[3] == 1):
                         pass
                     else:
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], i[1], i[2], "早退")
                         num += 1
             else:
                 if (last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], i[1], i[2], "早退")
                     num += 1
                 else:
                     pass
@@ -428,17 +428,17 @@ def get_except_record(time):
                 re = sorted(re)
                 la_rec = look_for(re)
                 if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], new_date, i[2], "旷工")
                     num += 1
                 else:
                     if (la_rec[3] == 1):
                         pass
                     else:
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], new_date, i[2], "旷工")
                         num += 1
             else:
                 if (last_rec[1][11:19] < time3 and last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], new_date, i[2], "旷工")
                     num += 1
                 else:
                     pass
@@ -452,13 +452,13 @@ def get_except_record(time):
                 re = sorted(re)
                 la_rec = look_for(re, time3)
                 if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], i[1], i[2], "迟到")
                     num += 1
                 else:
                     if (la_rec[3] == 1):
                        pass
                     else:
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], i[1], i[2], "迟到")
                         num += 1
             else:
                 if (last_rec[3] == 1):
@@ -480,11 +480,11 @@ def get_except_record(time):
                     if (la_rec[3] == 1):
                         pass
                     else:
-                        result_record += (i[0], new_date, i[2], "1")
+                        result_record += (i[0], i[1], i[2], "早退")
                         num += 1
             else:
                 if (last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "1")
+                    result_record += (i[0], i[1], i[2], "早退")
                     num += 1
                 else:
                     pass

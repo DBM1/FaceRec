@@ -1,6 +1,0 @@
-2018-09-01 16:39:48,705 - DataBase.py[line:23] - INFO: database class is creating...
-2018-09-01 16:39:48,733 - DataBase.py[line:51] - INFO: database is connecting...
-2018-09-01 16:39:52,148 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
-2018-09-01 16:39:52,149 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
-2018-09-01 16:40:04,849 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000009
-2018-09-01 16:40:04,850 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000009
