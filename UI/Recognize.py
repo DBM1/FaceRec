@@ -14,6 +14,8 @@ import numpy as np
 from Core import CNN
 import tensorflow as tf
 
+from Clients import EmpClient
+
 Builder.load_string("""
 #:import FloatLayout kivy.uix.floatlayout
 #:import label kivy.uix.label
@@ -52,7 +54,7 @@ Builder.load_string("""
         FloatLayout:
             TextInput:
                 id: ID
-                hint_text: "ID"
+                hint_text: "工号"
                 size_hint: (0.23, 1 / 17)
                 pos_hint: {'center_x': 0.79, 'y': 0.63}
                 background_normal: 'UI/input_line.png'
@@ -60,7 +62,7 @@ Builder.load_string("""
             
             TextInput:
                 id: name
-                hint_text: "Name"
+                hint_text: "姓名"
                 size_hint: (0.23, 1 / 17)
                 pos_hint: {'center_x': 0.79, 'y': 0.51}
                 background_normal: 'UI/input_line.png'
@@ -68,7 +70,7 @@ Builder.load_string("""
             
             TextInput:
                 id: apartment
-                hint_text: "Apartment"
+                hint_text: "部门"
                 size_hint: (0.23, 1 / 17)
                 pos_hint: {'center_x': 0.79, 'y': 0.39}
                 background_normal: 'UI/input_line.png'
@@ -83,6 +85,8 @@ Builder.load_string("""
             #     on_release: root.rec()
                     
 """)
+
+empclient = EmpClient.EmpClient()
 
 
 class KivyCamera(Image):
@@ -125,13 +129,13 @@ class KivyCamera(Image):
             else:
                 rate = self.jugement[np.argmax(self.jugement)] / 100.0
                 if rate > 0.85:
-                    self.parent.showResult(self.filename[np.argmax(self.jugement)])
+                    id = self.filename[np.argmax(self.jugement)]
+                    record = empclient.get_info(id)
+                    self.parent.showResult(record[0], record[1], record[2])
                 else:
-                    self.parent.showResult("Not include!")
+                    self.parent.showResult("Not include!", "", "")
                 self.jugement = np.zeros([classnum])
                 self.index = 0
-                # self.parent.remove_widget(self)
-                # self.capture.release()
                 KivyCamera.capturing = False
             # convert it to texture
             buf1 = cv2.flip(frame, 0)
@@ -148,8 +152,10 @@ class RecognizeScreen(Screen):
             camera = KivyCamera(60)
             self.add_widget(camera)
 
-    def showResult(self, id):
+    def showResult(self, id, name, apartmrnt):
         self.ids["ID"].text = id
+        self.ids["name"].text = name
+        self.ids["apartment"].text = apartmrnt
 
 
 class RecognizeApp(App):

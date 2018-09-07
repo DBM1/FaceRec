@@ -283,6 +283,9 @@ def add_emp_info(emp_id,emp_name,emp_department,emp_photo):
 def get_record_and_state(emp_id, time):
     year = str(time[0:4])
     month = str(time[5:7])
+    re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
+    if re == ():
+        return "wrong time"
     monthRange = calendar.monthrange(int(year), int(month))
 
     record = get_record_by_id(emp_id, time)
@@ -309,6 +312,8 @@ def get_record_and_state(emp_id, time):
 
 def get_info(emp_id):
     result = db.query("select * from empinfo where Emp_id=" + emp_id)
+    if result == ():
+        return "None"
     result = result[0]
     re = result[0] + "," + result[1] + "," + result[2] + "," + result[3] + "," + result[4]
     return re
@@ -337,6 +342,9 @@ def get_info_by_name(emp_name):
 def get_except_record(time):
     year = str(time[0:4])
     month = str(time[5:7])
+    re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
+    if re == ():
+        return 0,"wrong time"
     monthRange = calendar.monthrange(int(year), int(month))
 
     result_record=()

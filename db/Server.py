@@ -55,6 +55,8 @@ def get_info_by_name(info):
 def get_except_record(info):
     time = info[1]
     num,result_record = DbOp.get_except_record(time)
+    if num==0:
+        return str(result_record)
     result=str(num)+str(result_record)
     return result
 
