@@ -298,7 +298,6 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.fun()
-                # on_release: root.manager.current = 'queryAdEm'
 
             TextInput:
                 id: ID
@@ -567,18 +566,24 @@ class LoginScreen(Screen):
     def Login(self):
         id = self.ids.ID.text
         psw = self.ids.password.text
-        res = empclient.login(emp_id=id, psw=psw)
-        if (res == 'success'):
-            self.manager.current = 'mainAd'
-        elif (res == 'no such id'):
-            # self.ids.boarder.text = "no such id"                                 #已修改为弹框
-            s = 'no such id'
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        elif (res == 'wrong password'):                                    #已修改为弹框
-            #self.ids.boarder.text = 'wrong password'
-            s = 'wrong password'
+        if not (id=="" or psw == ""):
+            res = empclient.login(emp_id=id, psw=psw)
+            if (res == 'success'):
+                self.manager.current = 'mainAd'
+            elif (res == 'no such id'):
+                # self.ids.boarder.text = "no such id"                                 #已修改为弹框
+                s = '账号不存在'
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+            elif (res == 'wrong password'):  # 已修改为弹框
+                # self.ids.boarder.text = 'wrong password'
+                s = '密码错误'
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+        else:
+            s = "请输入账号密码"
             p = MyPopup()
             p.modify(s)
             p.open()
@@ -594,15 +599,16 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if (new_psw == iden_psw):                                                 #已修改为弹框
+
+        if (new_psw == iden_psw):  # 已修改为弹框
             empclient.change_psw(ori_psw, new_psw)
             # self.ids.code.text = "密码修改成功"
             s = "密码修改成功"
             p = MyPopup()
             p.modify(s)
             p.open()
-        else:                                                                    #已修改为弹框
-            #self.ids.code.text = '两次密码不一致'
+        else:  # 已修改为弹框
+            # self.ids.code.text = '两次密码不一致'
             s = '两次密码不一致'
             p = MyPopup()
             p.modify(s)
@@ -620,13 +626,21 @@ class InputAdScreen(Screen):
             id = self.ids["ID"].text
             name = self.ids["name"].text
             department = self.ids["apartment"].text
-            if not id == "":
+            if not (id == "" or name == "" or department == ""):
                 camera = KivyCamera(144, id)
                 self.add_widget(camera)
-            if (empclient.add_emp_info(id, name, department, "None")):
-                print("Adding employee information successful!")
+                if (empclient.add_emp_info(id, name, department, "None")):
+                    print("Adding employee information successful!")
+                else:
+                    s = "网络错误"
+                    p = MyPopup()
+                    p.modify(s)
+                    p.open()
             else:
-                print("Fail to add employee information!")
+                s = "请输入员工信息"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
 
 
 class QueryAdScreen(Screen):
@@ -644,6 +658,11 @@ class QueryAdScreen(Screen):
         if id == "":
             if not name == "":
                 QueryAdScreen.recordTuple = empclient.get_info_by_name(name)
+            else:
+                s = "请输入工号或姓名"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
         else:
             QueryAdScreen.recordTuple = empclient.get_info(id)
         if not QueryAdScreen.recordTuple == "":
@@ -711,6 +730,12 @@ class AccountingAdScreen(Screen):
         month = self.ids["month"].text
         date = year + "-" + month
         receive = empclient.get_except_record(date)
+        if not receive:
+            s = "数据查询失败"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+
         par = r'\((.*)\)'
         receive = receive.replace("\'", '')
         records = re.findall(par, receive)

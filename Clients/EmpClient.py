@@ -75,6 +75,5 @@ class EmpClient:
 
     def get_except_record(self,time):
         self.send("get_except_record,"+time)
-        print(time)
         result = self.recv(1024000)
         return result

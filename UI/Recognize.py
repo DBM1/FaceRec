@@ -33,7 +33,9 @@ Builder.load_string("""
     multiline: False
     padding: [10, 0.5 * (self.height - self.line_height)]
     font_name:'UI/droid.ttf'
-
+    background_color: (1,1,1,0.8)
+    readonly: True
+    
 <RecognizeScreen>:
     name: 'inputAd'
     BoxLayout:
@@ -72,13 +74,13 @@ Builder.load_string("""
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
             
-            Button:
-                text: '开始识别'
-                size_hint: (0.14, 1 / 17)
-                pos_hint: {'center_x': 0.79, 'y': 0.23}
-                background_normal: 'UI/button_normal.png'
-                background_down: 'UI/button_down.png'
-                on_release: root.rec()
+            # Button:
+            #     text: '开始识别'
+            #     size_hint: (0.14, 1 / 17)
+            #     pos_hint: {'center_x': 0.79, 'y': 0.23}
+            #     background_normal: 'UI/button_normal.png'
+            #     background_down: 'UI/button_down.png'
+            #     on_release: root.rec()
                     
 """)
 
@@ -102,6 +104,10 @@ class KivyCamera(Image):
         self.index = 0
         Clock.schedule_interval(self.update, 1.0 / fps)
 
+    def remove(self):
+        self.parent.remove_widget(self)
+        self.capture.release()
+
     def update(self, dt):
         ret, frame = self.capture.read()
         if ret:
@@ -124,8 +130,8 @@ class KivyCamera(Image):
                     self.parent.showResult("Not include!")
                 self.jugement = np.zeros([classnum])
                 self.index = 0
-                self.parent.remove_widget(self)
-                self.capture.release()
+                # self.parent.remove_widget(self)
+                # self.capture.release()
                 KivyCamera.capturing = False
             # convert it to texture
             buf1 = cv2.flip(frame, 0)
@@ -150,7 +156,9 @@ class RecognizeApp(App):
     def build(self):
         Window.fullscreen = "auto"
         self.title = 'SuperAdminister'
-        return RecognizeScreen()
+        screen = RecognizeScreen()
+        screen.rec()
+        return screen
 
 
 with tf.Session() as sess:
@@ -158,4 +166,5 @@ with tf.Session() as sess:
     output = CNN.cnnlayer(classnum)
     saver = tf.train.Saver()
     saver.restore(sess, "../Core/model/testmodel1")
-    RecognizeApp().run()
+    app = RecognizeApp()
+    app.run()
