@@ -1,7 +1,6 @@
 # coding=utf-8
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from kivy.uix.popup import Popup
 from Collection import imgCollection
@@ -624,7 +623,7 @@ class SettingsEmScreen(Screen):
             p.open()
         else:
             if (new_psw == iden_psw):  # 已修改为弹框
-                if(empclient.change_psw(ori_psw, new_psw)=="wrong psw"):
+                if (empclient.change_psw(ori_psw, new_psw) == "wrong psw"):
                     # self.ids.code.text = "密码修改成功"
                     s = "原密码错误"
                     p = MyPopup()
@@ -818,7 +817,7 @@ class AccountingAdScreen(Screen):
 
 class SuperAdministerApp(App):
     def build(self):
-        #Window.fullscreen = "auto"
+        # Window.fullscreen = "auto"
         self.title = 'SuperAdminister'
         return ScreenManager()
 

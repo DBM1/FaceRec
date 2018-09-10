@@ -42,5 +42,4 @@ def capture(id):
     cap.release()
     cv2.destroyAllWindows()
 
-
 # capture("test")

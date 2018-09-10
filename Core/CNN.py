@@ -231,7 +231,6 @@ def test():
             result += i
         print(result)
 
-
 # #
 # trainX, trainY = impimg()
 # train(trainX, trainY, "./model/testmodel2")
