@@ -625,6 +625,9 @@ class SettingsEmScreen(Screen):
                     p = MyPopup()
                     p.modify(s)
                     p.open()
+                    self.ids["idetiNewPass"].text = ""
+                    self.ids["newPass"].text = ""
+                    self.ids["previousPass"].text = ""
             else:  # 已修改为弹框
                 # self.ids.code.text = '两次密码不一致'
                 s = '两次密码不一致'

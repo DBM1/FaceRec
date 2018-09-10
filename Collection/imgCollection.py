@@ -43,4 +43,4 @@ def capture(id):
     cv2.destroyAllWindows()
 
 
-capture("test")
+# capture("test")
