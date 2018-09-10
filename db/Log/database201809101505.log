@@ -1,0 +1,72 @@
+2018-09-10 15:05:45,654 - DataBase.py[line:23] - INFO: database class is creating...
+2018-09-10 15:05:45,903 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-10 15:05:55,055 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:05:55,116 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:16:07,023 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:16:07,066 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:29:24,148 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:29:24,196 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:29:26,797 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:29:26,837 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:29:26,877 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:29:26,914 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:29:51,810 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:29:51,878 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:29:53,715 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:29:53,752 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:29:53,789 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:29:53,826 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:30:34,691 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:30:34,739 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:30:36,749 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:30:36,786 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:30:36,822 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:30:36,859 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:31:17,181 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:31:17,218 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:31:20,012 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:31:20,049 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:31:20,100 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:31:20,137 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:31:46,561 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:31:46,614 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:31:48,477 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:31:48,532 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:31:48,572 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:31:48,611 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:32:06,530 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:32:06,573 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:32:08,317 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:32:08,372 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:32:08,413 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:32:08,450 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:32:31,307 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:32:31,353 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:32:34,703 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201808'
+2018-09-10 15:32:34,753 - DataBase.py[line:56] - INFO: select * from record_201808 where emp_id=000001
+2018-09-10 15:32:34,797 - DataBase.py[line:56] - INFO: select * from except_201808 where emp_id=000001
+2018-09-10 15:32:34,837 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:33:59,538 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:33:59,578 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:34:04,687 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:34:04,726 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:34:04,767 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:34:04,807 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:37:48,679 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:37:48,737 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:37:52,392 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:37:52,437 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:37:52,476 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:37:52,513 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:40:50,827 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:40:50,864 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:40:52,655 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:40:52,703 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:40:52,744 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:40:52,780 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
+2018-09-10 15:50:05,918 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:50:05,955 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 15:50:07,859 - DataBase.py[line:56] - INFO: SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_201801'
+2018-09-10 15:50:07,897 - DataBase.py[line:56] - INFO: select * from record_201801 where emp_id=000001
+2018-09-10 15:50:07,934 - DataBase.py[line:56] - INFO: select * from except_201801 where emp_id=000001
+2018-09-10 15:50:07,971 - DataBase.py[line:62] - ERROR: query database exception, (1146, "Table 'facepro.except_201801' doesn't exist")
