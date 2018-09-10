@@ -240,7 +240,7 @@ def get_record_and_state(emp_id, time):
     record = get_record_by_id(emp_id, time)
 
     except_record = db.query("select * from except_" + year + month + " where emp_id=" + emp_id)
-    a, b, c, d = monthRange[1]*2, 0, 0, 0
+    a, b, c, d = monthRange[1], 0, 0, 0
     for i in except_record:
         if i[3] == 1:
             b += 1
