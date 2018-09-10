@@ -398,26 +398,29 @@ class LoginScreen(Screen):
     def Login(self):
         id = self.ids.ID.text
         psw = self.ids.password.text
-        res = emp.login(emp_id=id, psw=psw)
+        a = 0
         if(id == '' or psw == ''):
             s = '输入为空'
             p = MyPopup()
             p.modify(s)
             p.open()
-        if(res == 'success'):
-            self.manager.current = 'mainEm'
-        elif(res == 'no such id'):                                    #已修改为弹框
-            #self.ids.boarder.text = "no such id"
-            s = 'no such id'
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        elif(res == 'wrong password'):
-            #self.ids.boarder.text = 'wrong password'                                    #已修改为弹框
-            s = 'wrong password'
-            p = MyPopup()
-            p.modify(s)
-            p.open()
+            a = 1
+        if (a == 0):
+            res = emp.login(emp_id=id, psw=psw)
+            if (res == 'success'):
+                self.manager.current = 'mainEm'
+            elif (res == 'no such id'):  # 已修改为弹框
+                # self.ids.boarder.text = "no such id"
+                s = 'no such id'
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+            elif (res == 'wrong password'):
+                # self.ids.boarder.text = 'wrong password'                                    #已修改为弹框
+                s = 'wrong password'
+                p = MyPopup()
+                p.modify(s)
+                p.open()
 
 class MainEmScreen(Screen):
     def ShiftToSetting(self):
