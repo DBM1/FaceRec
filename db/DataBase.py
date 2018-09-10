@@ -68,6 +68,9 @@ class DataBase:
         try:
             self._cursor.execute(sql)
             self._conn.commit()
+            self.close()
+            self._conn = self.connect()
+            self._cursor = self._conn.cursor()
             flag = True
         except Exception as data:
             if (str(data)[1:5] == '1060'):
