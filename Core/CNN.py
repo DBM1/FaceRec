@@ -235,6 +235,6 @@ def test():
 # #
 # trainX, trainY = impimg()
 # train(trainX, trainY, "./model/testmodel2")
-rec("./model/testmodel2", 2)
+# rec("./model/testmodel2", 2)
 
 # test()
