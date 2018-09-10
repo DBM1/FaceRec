@@ -238,7 +238,8 @@ def get_record_and_state(emp_id, time):
     monthRange = calendar.monthrange(int(year), int(month))
 
     record = get_record_by_id(emp_id, time)
-
+    if record == ():
+        return "None"
     except_record = db.query("select * from except_" + year + month + " where emp_id=" + emp_id)
     a, b, c, d = monthRange[1]*2, 0, 0, 0
     for i in except_record:

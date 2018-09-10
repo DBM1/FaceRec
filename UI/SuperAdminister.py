@@ -1,6 +1,7 @@
 # coding=utf-8
 from kivy.app import App
 from kivy.lang import Builder
+from kivy.core.window import Window
 from kivy.uix.screenmanager import ScreenManager, Screen, SlideTransition
 from kivy.uix.popup import Popup
 from Collection import imgCollection
@@ -24,15 +25,12 @@ Builder.load_string("""
         id:button
         text: 'Wrong Password!'
         on_press: root.dismiss()
-
 <BoxLayout>:
     padding: 10
     spacing: 10
-
 <Label>:
     font_size: 15
     font_name:'UI/droid.ttf'
-
 <Button>:
     font_name:'UI/droid.ttf'
     font_size: 18
@@ -41,13 +39,12 @@ Builder.load_string("""
     border: (2, 2, 2, 2)
     background_normal: 'UI/button1.png'
     background_down: 'UI/button2.png'
-
 <TextInput>:
     font_size: 12
     multiline: False
     padding: [10, 0.5 * (self.height - self.line_height)]
     font_name:'UI/droid.ttf'
-            
+
 <ScreenManager>:
     LoginScreen
     MainAdScreen
@@ -56,13 +53,11 @@ Builder.load_string("""
     QueryAdEmScreen
     AccountingAdScreen
     SettingsEmScreen
-
 <MainAdScreen>:
     id:s1
     name: 'mainAd'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -70,7 +65,6 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/back1.png"
-
         FloatLayout:
             Button: 
                 size_hint: (0.29, 0.13)                            #0.28    0.42
@@ -78,32 +72,28 @@ Builder.load_string("""
                 background_normal: 'UI/mainAd-luru2.png'
                 background_down: 'UI/mainAd-luru-down2.png'
                 on_release: root.manager.current = 'inputAd'
-
             Button:
                 size_hint: (0.29, 0.13)
                 pos_hint: {'center_x': 0.82, 'y': 0.43}
                 background_normal: 'UI/mainAd-query2.png'
                 background_down:'UI/mainAd-query-down2.png'
                 on_release: root.manager.current = 'queryAd'
-
             Button:
                 size_hint: (0.29, 0.13)
                 pos_hint: {'center_x': 0.82, 'y': 0.26}
                 background_normal: 'UI/mainAd-account2.png'
                 background_down: 'UI/mainAd-account-down2.png'
                 on_release: root.manager.current = 'accountingAd'
-                
+
             Button:
                 size_hint: (0.29, 0.13)
                 pos_hint: {'center_x': 0.82, 'y': 0.09}
                 background_normal: 'UI/mainAd-setting.png'
                 background_down:'UI/mainAd-setting-down.png'
                 on_release: root.manager.current = 'settingsEm'
-
 <LoginScreen>:
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -111,7 +101,6 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/Login-back.png"
-
         FloatLayout:
             TextInput:
                 id: ID
@@ -123,7 +112,6 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.21, 'y': 0.60}               #0.81   0.65
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             TextInput:
                 id: password
                 hint_text: "密码"
@@ -134,13 +122,12 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.21, 'y': 0.48}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-                
+
             Label:
                 id: boarder
                 font_size: 20
                 size_hint: (0.25, 1/17)
                 pos_hint: {'center_x': 0.21, 'y': 0.36}
-
             Button:
                 text:'登录'
                 size_hint: (0.15, 1/17)
@@ -148,13 +135,11 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down: 'UI/button_down.png'
                 on_release:root.Login()
-
 <SettingsEmScreen>:
     id:Setting
     name: 'settingsEm'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -162,14 +147,12 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/settingsEm-back.png"
-
         FloatLayout:
             Label:
                 font_size:20
                 text: '原密码:'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.3, 'y': 0.5}
-
             TextInput:                       
                 id: previousPass
                 password: True
@@ -178,13 +161,11 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.57, 'y': 0.5}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             Label:
                 font_size:20
                 text: '新密码:'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.3, 'y': 0.4}
-
             TextInput:                       
                 id: newPass
                 password: True
@@ -193,13 +174,11 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.57, 'y': 0.4}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             Label:
                 font_size:20
                 text: '确认新密码:'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.3, 'y': 0.3}
-
             TextInput:                       
                 id: idetiNewPass
                 password: True
@@ -208,18 +187,16 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.57, 'y': 0.3}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             Label:                       
                 id: code
                 size_hint: (0.2, 0.05)
                 pos_hint: {'center_x': 0.57, 'y': 0.2}
                 # background_normal: 'UI/input_line.png'
                 # background_active: 'UI/white.png'
-                
-            #Image:
-                #size_hint: (0.18, 0.1)
-                #pos_hint: {'center_x': 0.47, 'y': 0.07}
 
+            Image:
+                size_hint: (0.18, 0.1)
+                pos_hint: {'center_x': 0.47, 'y': 0.07}
             Button:
                 text: '确认修改'
                 size_hint: (0.15, 0.06)
@@ -227,14 +204,10 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.ChangeInfo()
-
-
-
 <InputAdScreen>:
     name: 'inputAd'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -242,7 +215,6 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/InputAd-back.png"
-
         FloatLayout:
             TextInput:
                 id: ID
@@ -251,7 +223,6 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.79, 'y': 0.63}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             TextInput:
                 id: name
                 hint_text: "姓名"
@@ -259,7 +230,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.79, 'y': 0.51}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-                
+
             TextInput:
                 id: apartment
                 hint_text: "部门"
@@ -267,7 +238,6 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.79, 'y': 0.39}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             Button:
                 text:'录入'
                 size_hint: (0.14, 1/17)
@@ -275,12 +245,10 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down: 'UI/button_down.png'
                 on_release: root.fun()
-
 <QueryAdScreen>:
     name: 'queryAd'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -288,7 +256,6 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/QueryAd-back.png"
-
         FloatLayout:
             ListView:
                 id : lists
@@ -301,7 +268,6 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.fun()
-
             TextInput:
                 id: ID
                 hint_text: "工号"
@@ -309,7 +275,6 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.34, 'y': 0.72}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
             TextInput:
                 id: name
                 hint_text: "姓名"
@@ -317,12 +282,10 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.62, 'y': 0.72}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-
 <QueryAdEmScreen>:
     name: 'queryAdEm'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -330,27 +293,26 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/QueryAd-back.png"
-
         FloatLayout:
             ListView:
                 id:list
                 pos_hint: {'center_x': 0.39, 'y': 0.1}
                 size_hint: (0.63, 0.61)
                 item_strings: 
-                
+
             Label:
                 id:name
                 font_size:25
                 size_hint: (0.2, 0.1)
                 pos_hint:{'center_x': 0.7, 'y': 0.85}
                 text: ' '
-                
+
             Label:
                 font_size:20
                 text: '选择日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.11, 'y': 0.73}
-            
+
             Spinner:
                 id:Year
                 text: '2018'
@@ -372,13 +334,13 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.Query()
-                
+
             Label:
                 font_size:14
                 text: '迟到/天'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.07, 'y': 0.04}
-                
+
             TextInput:                       
                 id: late
                 # hint_text: "late"
@@ -386,13 +348,13 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.12, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-            
+
             Label:
                 font_size:14
                 text: '旷工/天'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.21, 'y': 0.04}
-                
+
             TextInput:                       
                 id: off
                 # hint_text: 'off'
@@ -400,13 +362,13 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.26, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-                
+
             Label:
                 font_size:14
                 text: '早退/天'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.35, 'y': 0.04}
-                
+
             TextInput:                       
                 id: early
                 # hint_text: 'early'
@@ -414,13 +376,13 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.40, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-                
+
             Label:
                 font_size:14
                 text: '正常/天'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.49, 'y': 0.04}
-                
+
             TextInput:                       
                 id: normal
                 # hint_text: 'normal'
@@ -428,7 +390,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.54, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-                
+
             Button:
                 text: '导出'
                 size_hint: (0.10, 0.04)
@@ -436,14 +398,12 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.export()
-                
-            
+
 
 <AccountingAdScreen>:
     name: 'accountingAd'
     BoxLayout:
         orientation: 'vertical'
-
         canvas.before:
             Color:
                 rgba: 1, 1, 1, 1
@@ -451,19 +411,18 @@ Builder.load_string("""
                 pos: self.pos
                 size: self.size
                 source: "UI/AccountingAd-back.png"
-
         FloatLayout:
             ListView:
                 id: list
                 size_hint: (0.5, 0.75)
                 pos_hint: {'center_x': 0.668, 'y': 0.11}
-                
+
             Label:
                 font_size:20
                 text: '选择日期:'
                 size_hint: (0.10, 0.04)
                 pos_hint: {'center_x': 0.45, 'y': 0.88}
-                
+
             Spinner:
                 id:year
                 text: '2018'
@@ -478,13 +437,13 @@ Builder.load_string("""
                 size_hint: (None, None)
                 size:(150,34)
                 pos_hint: {'center_x': 0.72, 'y': 0.88} 
-                
+
             Label:
                 font_size:14
                 text: '共计/人次'
                 size_hint: (0.15, 0.04)
                 pos_hint: {'center_x': 0.53, 'y': 0.04}
-                
+
             TextInput:                       
                 id: late
                 # hint_text: "num"
@@ -492,7 +451,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.61, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
-            
+
             Button:
                 text: '导出'
                 size_hint: (0.11, 0.05)
@@ -500,7 +459,6 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.export()
-
             Button:
                 text: '查询'
                 size_hint: (0.10, 0.04)
@@ -508,7 +466,6 @@ Builder.load_string("""
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.fun()
-
 """)
 
 empclient = EmpClient.EmpClient()
@@ -606,18 +563,8 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if (ori_psw == ''):
-            s = "请输入原密码"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        elif (new_psw == ''):
-            s = "请输入新密码"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        elif (iden_psw == ''):
-            s = "请确认新密码"
+        if (ori_psw == "" or new_psw == "" or iden_psw == ""):
+            s = "密码不能为空"
             p = MyPopup()
             p.modify(s)
             p.open()
@@ -634,9 +581,6 @@ class SettingsEmScreen(Screen):
                     p = MyPopup()
                     p.modify(s)
                     p.open()
-                    self.ids["idetiNewPass"].text = ""
-                    self.ids["newPass"].text = ""
-                    self.ids["previousPass"].text = ""
             else:  # 已修改为弹框
                 # self.ids.code.text = '两次密码不一致'
                 s = '两次密码不一致'
@@ -726,7 +670,7 @@ class QueryAdEmScreen(Screen):
         time = year + '-' + month
         QueryAdEmScreen.Time = time
         res = empclient.get_record_and_state(time, QueryAdScreen.recordTuple[0])
-        if res == "wrong time":
+        if (res == "wrong time") or (res =="None"):
             s = "数据查询失败"
             p = MyPopup()
             p.modify(s)
@@ -735,18 +679,28 @@ class QueryAdEmScreen(Screen):
             r = res[1:-1]
             comp = re.split(r"[(](.*?)[)]", r)
             date = re.findall('\d+', comp[-1])
-            self.ids.late.text = date[1]
-            self.ids.off.text = date[3]
-            self.ids.early.text = date[2]
-            self.ids.normal.text = date[0]
-            record = QueryAdEmScreen.record
-            for i in range(len(comp)):
-                if i % 2 == 1:
-                    comp[i] = comp[i].replace("'", '')
-                    record.append(comp[i])
-            self.ids.list.item_strings = record
-            info = empclient.get_info(QueryAdScreen.recordTuple[0])
-            self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
+            if not date == []:
+                self.ids.late.text = date[1]
+                self.ids.off.text = date[3]
+                self.ids.early.text = date[2]
+                self.ids.normal.text = date[0]
+                record = QueryAdEmScreen.record
+                for i in range(len(comp)):
+                    if i % 2 == 1:
+                        comp[i] = comp[i].replace("'", '')
+                        record.append(comp[i])
+                self.ids.list.item_strings = record
+                info = empclient.get_info(QueryAdScreen.recordTuple[0])
+                self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
+            else:
+                self.ids.late.text = ""
+                self.ids.off.text = ""
+                self.ids.early.text = ""
+                self.ids.normal.text = ""
+                # s = "该月无数据"
+                # p = MyPopup()
+                # p.modify(s)
+                # p.open()
 
     def export(self):
         record = QueryAdEmScreen.record
@@ -817,7 +771,7 @@ class AccountingAdScreen(Screen):
 
 class SuperAdministerApp(App):
     def build(self):
-        # Window.fullscreen = "auto"
+        Window.fullscreen = "auto"
         self.title = 'SuperAdminister'
         return ScreenManager()
 

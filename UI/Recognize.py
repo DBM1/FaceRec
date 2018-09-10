@@ -16,6 +16,8 @@ import tensorflow as tf
 
 from Clients import EmpClient
 
+import pyttsx3
+
 Builder.load_string("""
 #:import FloatLayout kivy.uix.floatlayout
 #:import label kivy.uix.label
@@ -115,7 +117,7 @@ class KivyCamera(Image):
     def update(self, dt):
         ret, frame = self.capture.read()
         if ret:
-            if (self.index < 100):
+            if (self.index < 50):
                 faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(150, 150))
                 for (x, y, w, h) in faces:
                     cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -127,13 +129,16 @@ class KivyCamera(Image):
                     self.jugement[[np.argmax(result)]] += 1
                     self.index += 1
             else:
-                rate = self.jugement[np.argmax(self.jugement)] / 100.0
+                rate = self.jugement[np.argmax(self.jugement)] / 50.0
                 if rate > 0.85:
                     id = self.filename[np.argmax(self.jugement)]
                     record = empclient.get_info(id)
                     self.parent.showResult(record[0], record[1], record[2])
+                    eng.say(r"欢迎，" + record[1])
                 else:
-                    self.parent.showResult("Not include!", "", "")
+                    self.parent.showResult("Not include!")
+                    eng.say(r"用户不存在")
+                eng.runAndWait()
                 self.jugement = np.zeros([classnum])
                 self.index = 0
                 KivyCamera.capturing = False
@@ -152,7 +157,7 @@ class RecognizeScreen(Screen):
             camera = KivyCamera(60)
             self.add_widget(camera)
 
-    def showResult(self, id, name, apartmrnt):
+    def showResult(self, id="", name="", apartmrnt=""):
         self.ids["ID"].text = id
         self.ids["name"].text = name
         self.ids["apartment"].text = apartmrnt
@@ -172,5 +177,6 @@ with tf.Session() as sess:
     output = CNN.cnnlayer(classnum)
     saver = tf.train.Saver()
     saver.restore(sess, "../Core/model/testmodel1")
+    eng = pyttsx3.init()
     app = RecognizeApp()
     app.run()
