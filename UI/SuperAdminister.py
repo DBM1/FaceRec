@@ -105,7 +105,7 @@ Builder.load_string("""
             TextInput:
                 id: ID
                 hint_text: "账号"
-                text: "000001"
+                text: "管理员"
                 readonly: True
                 font_size: 20
                 size_hint: (0.25, 1/17)
@@ -533,7 +533,7 @@ class LoginScreen(Screen):
         id = self.ids.ID.text
         psw = self.ids.password.text
         if not (id == "" or psw == ""):
-            res = empclient.login(emp_id=id, psw=psw)
+            res = empclient.login(emp_id="000001", psw=psw)
             if (res == 'success'):
                 self.manager.current = 'mainAd'
             elif (res == 'no such id'):  # 已修改为弹框
