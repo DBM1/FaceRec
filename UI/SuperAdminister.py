@@ -16,6 +16,8 @@ import os
 import re
 import xlwt
 
+PORT = 5920
+
 Builder.load_string("""
 <MyPopup>:
     size_hint: .3, .3
@@ -24,7 +26,7 @@ Builder.load_string("""
     Button:
         id:button
         text: 'Wrong Password!'
-        on_press: root.dismiss()·
+        on_press: root.dismiss()
 
 <BoxLayout>:
     padding: 10
@@ -116,9 +118,8 @@ Builder.load_string("""
         FloatLayout:
             TextInput:
                 id: ID
-                hint_text: "账号"
+                hint_text: "ID"
                 text: "000001"
-                readonly: True
                 font_size: 20
                 size_hint: (0.25, 1/17)
                 pos_hint: {'center_x': 0.21, 'y': 0.60}               #0.81   0.65
@@ -127,8 +128,9 @@ Builder.load_string("""
 
             TextInput:
                 id: password
-                hint_text: "密码"
-                password: True
+                hint_text: "Password"
+                password:True
+                password_mask:'●'
                 font_size: 20
                 size_hint: (0.25, 1/17)
                 pos_hint: {'center_x': 0.21, 'y': 0.48}
@@ -142,7 +144,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.21, 'y': 0.36}
 
             Button:
-                text:'登录'
+                text:'Login'
                 size_hint: (0.15, 1/17)
                 pos_hint: {'center_x': 0.21, 'y': 0.2}
                 background_normal: 'UI/button_normal.png'
@@ -173,6 +175,8 @@ Builder.load_string("""
             TextInput:                       
                 id: previousPass
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.5}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -185,8 +189,9 @@ Builder.load_string("""
 
             TextInput:                       
                 id: newPass
-                password: True
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.4}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -199,8 +204,9 @@ Builder.load_string("""
 
             TextInput:                       
                 id: idetiNewPass
-                password: True
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.3}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -242,7 +248,7 @@ Builder.load_string("""
         FloatLayout:
             TextInput:
                 id: ID
-                hint_text: "工号"
+                hint_text: "ID"
                 size_hint: (0.23, 1/17)
                 pos_hint: {'center_x': 0.79, 'y': 0.63}
                 background_normal: 'UI/input_line.png'
@@ -250,7 +256,7 @@ Builder.load_string("""
 
             TextInput:
                 id: name
-                hint_text: "姓名"
+                hint_text: "Name"
                 size_hint: (0.23, 1/17)
                 pos_hint: {'center_x': 0.79, 'y': 0.51}
                 background_normal: 'UI/input_line.png'
@@ -258,7 +264,7 @@ Builder.load_string("""
                 
             TextInput:
                 id: apartment
-                hint_text: "部门"
+                hint_text: "Apartment"
                 size_hint: (0.23, 1/17)
                 pos_hint: {'center_x': 0.79, 'y': 0.39}
                 background_normal: 'UI/input_line.png'
@@ -291,16 +297,17 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.39, 'y': 0.04}
                 size_hint: (0.65, 0.65)
             Button:
-                text: '查找'
+                text: 'Search'
                 size_hint: (0.10, 0.05)
                 pos_hint: {'center_x': 0.1, 'y': 0.72}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
                 on_release: root.fun()
+                # on_release: root.manager.current = 'queryAdEm'
 
             TextInput:
                 id: ID
-                hint_text: "工号"
+                hint_text: "ID"
                 size_hint: (0.18, 0.05)
                 pos_hint: {'center_x': 0.34, 'y': 0.72}
                 background_normal: 'UI/input_line.png'
@@ -308,7 +315,7 @@ Builder.load_string("""
 
             TextInput:
                 id: name
-                hint_text: "姓名"
+                hint_text: "Name"
                 size_hint: (0.18, 0.05)
                 pos_hint: {'center_x': 0.62, 'y': 0.72}
                 background_normal: 'UI/input_line.png'
@@ -377,7 +384,7 @@ Builder.load_string("""
                 
             TextInput:                       
                 id: late
-                # hint_text: "late"
+                hint_text: "late"
                 size_hint: (0.06, 0.04)
                 pos_hint: {'center_x': 0.12, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
@@ -391,7 +398,7 @@ Builder.load_string("""
                 
             TextInput:                       
                 id: off
-                # hint_text: 'off'
+                hint_text: 'off'
                 size_hint: (0.06, 0.04)
                 pos_hint: {'center_x': 0.26, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
@@ -405,7 +412,7 @@ Builder.load_string("""
                 
             TextInput:                       
                 id: early
-                # hint_text: 'early'
+                hint_text: 'early'
                 size_hint: (0.06, 0.04)
                 pos_hint: {'center_x': 0.40, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
@@ -419,7 +426,7 @@ Builder.load_string("""
                 
             TextInput:                       
                 id: normal
-                # hint_text: 'normal'
+                hint_text: 'normal'
                 size_hint: (0.06, 0.04)
                 pos_hint: {'center_x': 0.54, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
@@ -466,14 +473,14 @@ Builder.load_string("""
                 values: ['2018', '2017', '2016']
                 size_hint: (None, None)
                 size:(150,34)
-                pos_hint: {'center_x': 0.60, 'y': 0.88} 
+                pos_hint: {'center_x': 0.62, 'y': 0.88} 
             Spinner:
                 id:month
                 text: '01'
                 values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
                 size_hint: (None, None)
                 size:(150,34)
-                pos_hint: {'center_x': 0.72, 'y': 0.88} 
+                pos_hint: {'center_x': 0.82, 'y': 0.88} 
                 
             Label:
                 font_size:14
@@ -483,7 +490,7 @@ Builder.load_string("""
                 
             TextInput:                       
                 id: late
-                # hint_text: "num"
+                hint_text: "num"
                 size_hint: (0.06, 0.04)
                 pos_hint: {'center_x': 0.61, 'y': 0.04}
                 background_normal: 'UI/input_line.png'
@@ -495,15 +502,9 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.85, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                on_release: root.export()
-
-            Button:
-                text: '查询'
-                size_hint: (0.10, 0.04)
-                pos_hint: {'center_x': 0.85, 'y': 0.88} 
-                background_normal: 'UI/button_normal.png'
-                background_down:'UI/button_down.png'
                 on_release: root.fun()
+                # on_release: root.manager.current = 'queryAd'
+
 
 """)
 
@@ -571,22 +572,18 @@ class LoginScreen(Screen):
     def Login(self):
         id = self.ids.ID.text
         psw = self.ids.password.text
-        if not (id == "" or psw == ""):
-            res = empclient.login(emp_id=id, psw=psw)
-            if (res == 'success'):
-                self.manager.current = 'mainAd'
-            elif (res == 'no such id'):  # 已修改为弹框
-                s = '账号不存在'
-                p = MyPopup()
-                p.modify(s)
-                p.open()
-            elif (res == 'wrong password'):  # 已修改为弹框
-                s = '密码错误'
-                p = MyPopup()
-                p.modify(s)
-                p.open()
-        else:
-            s = "请输入账号密码"
+        res = empclient.login(emp_id=id, psw=psw)
+        if (res == 'success'):
+            self.manager.current = 'mainAd'
+        elif (res == 'no such id'):
+            # self.ids.boarder.text = "no such id"                                 #已修改为弹框
+            s = 'no such id'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif (res == 'wrong password'):                                    #已修改为弹框
+            #self.ids.boarder.text = 'wrong password'
+            s = 'wrong password'
             p = MyPopup()
             p.modify(s)
             p.open()
@@ -602,16 +599,20 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-
         if (new_psw == iden_psw):  # 已修改为弹框
-            empclient.change_psw(ori_psw, new_psw)
-            # self.ids.code.text = "密码修改成功"
-            s = "密码修改成功"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        else:  # 已修改为弹框
-            # self.ids.code.text = '两次密码不一致'
+            if (empclient.change_psw(ori_psw, new_psw) == 'true'):
+                # self.ids.code.text = "密码修改成功"
+                s = "密码修改成功"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+            else:
+                s = "原密码输入不正确"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+        else:                                                                    #已修改为弹框
+            #self.ids.code.text = '两次密码不一致'
             s = '两次密码不一致'
             p = MyPopup()
             p.modify(s)
@@ -629,21 +630,13 @@ class InputAdScreen(Screen):
             id = self.ids["ID"].text
             name = self.ids["name"].text
             department = self.ids["apartment"].text
-            if not (id == "" or name == "" or department == ""):
+            if not id == "":
                 camera = KivyCamera(144, id)
                 self.add_widget(camera)
-                if (empclient.add_emp_info(id, name, department, "None")):
-                    print("Adding employee information successful!")
-                else:
-                    s = "网络错误"
-                    p = MyPopup()
-                    p.modify(s)
-                    p.open()
+            if (empclient.add_emp_info(id, name, department, "None")):
+                print("Adding employee information successful!")
             else:
-                s = "请输入员工信息"
-                p = MyPopup()
-                p.modify(s)
-                p.open()
+                print("Fail to add employee information!")
 
 
 class QueryAdScreen(Screen):
@@ -661,14 +654,9 @@ class QueryAdScreen(Screen):
         if id == "":
             if not name == "":
                 QueryAdScreen.recordTuple = empclient.get_info_by_name(name)
-            else:
-                s = "请输入工号或姓名"
-                p = MyPopup()
-                p.modify(s)
-                p.open()
         else:
             QueryAdScreen.recordTuple = empclient.get_info(id)
-        if not QueryAdScreen.recordTuple[0] == "None":
+        if not QueryAdScreen.recordTuple == "":
             len1 = len(QueryAdScreen.recordTuple)
             for i in range(len1 // 5):
                 record = QueryAdScreen.recordTuple[0 + 5 * i] + "    " + QueryAdScreen.recordTuple[1 + 5 * i] + "    " + \
@@ -678,11 +666,6 @@ class QueryAdScreen(Screen):
             list.item_strings = showList
             if len1 == 5:
                 self.manager.current = 'queryAdEm'
-        else:
-            s = "工号或姓名不存在"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
 
 
 class QueryAdEmScreen(Screen):
@@ -699,49 +682,35 @@ class QueryAdEmScreen(Screen):
         time = year + '-' + month
         QueryAdEmScreen.Time = time
         res = empclient.get_record_and_state(time, QueryAdScreen.recordTuple[0])
-        if res == "wrong time":
-            s = "数据查询失败"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        else:
-            r = res[1:-1]
-            comp = re.split(r"[(](.*?)[)]", r)
-            date = re.findall('\d+', comp[-1])
-            self.ids.late.text = date[1]
-            self.ids.off.text = date[3]
-            self.ids.early.text = date[2]
-            self.ids.normal.text = date[0]
-            record = QueryAdEmScreen.record
-            for i in range(len(comp)):
-                if i % 2 == 1:
-                    comp[i] = comp[i].replace("'", '')
-                    record.append(comp[i])
-            self.ids.list.item_strings = record
-            info = empclient.get_info(QueryAdScreen.recordTuple[0])
-            self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
+        r = res[1:-1]
+        comp = re.split(r"[(](.*?)[)]", r)
+        date = re.findall('\d+', comp[-1])
+        self.ids.late.text = date[1]
+        self.ids.off.text = date[3]
+        self.ids.early.text = date[2]
+        self.ids.normal.text = date[0]
+        record = QueryAdEmScreen.record
+        for i in range(len(comp)):
+            if i % 2 == 1:
+                comp[i] = comp[i].replace("'", '')
+                record.append(comp[i])
+        self.ids.list.item_strings = record
+        info = empclient.get_info(QueryAdScreen.recordTuple[0])
+        self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
 
     def export(self):
         record = QueryAdEmScreen.record
+        wbk = xlwt.Workbook()
+        sheet = wbk.add_sheet("sheet1")
+        for i in range(len(record)):
+            item = record[i].split(',')
+            for j in range(len(item)):
+                sheet.write(i, j, item[j])
         if not record == []:
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet1")
-            for i in range(len(record)):
-                item = record[i].split(',')
-                for j in range(len(item)):
-                    sheet.write(i, j, item[j])
             wbk.save("../ExportFile/" + QueryAdScreen.recordTuple[0] + '-' + QueryAdEmScreen.Time + ".xls")
-        else:
-            s = "导出记录为空"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
 
 
 class AccountingAdScreen(Screen):
-    record = []
-    date = ""
-
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainAd"
@@ -750,42 +719,26 @@ class AccountingAdScreen(Screen):
     def fun(self):
         year = self.ids["year"].text
         month = self.ids["month"].text
-        AccountingAdScreen.date = year + "-" + month
-        receive = empclient.get_except_record(AccountingAdScreen.date)
-        if receive == "wrong time":
-            s = "数据查询失败"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
-        else:
-            par = r'\((.*)\)'
-            receive = receive.replace("\'", '')
-            records = re.findall(par, receive)
-            records = records[0].split(",")
-            records = np.array(records).reshape(len(records) // 4, 4)
-            AccountingAdScreen.record = records
-            showList = []
-            for i in range(records.shape[0]):
-                showList.append("")
-                for j in range(records.shape[1]):
-                    showList[i] += records[i][j] + "    "
-            self.ids["late"].text = str(records.shape[0])
-            self.ids["list"].item_strings = showList
-
-    def export(self):
-        records = AccountingAdScreen.record
-        if not records == []:
-            wbk = xlwt.Workbook()
-            sheet = wbk.add_sheet("sheet1")
-            for i in range(records.shape[0]):
-                for j in range(records.shape[1]):
-                    sheet.write(i, j, records[i][j])
-            wbk.save("../ExportFile/" + "Records-" + AccountingAdScreen.date + ".xls")
-        else:
-            s = "导出记录为空"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
+        date = year + "-" + month
+        receive = empclient.get_except_record(date)
+        par = r'\((.*)\)'
+        receive = receive.replace("\'", '')
+        records = re.findall(par, receive)
+        records = records[0].split(",")
+        records = np.array(records).reshape(len(records) // 4, 4)
+        showList = []
+        for i in range(records.shape[0]):
+            showList.append("")
+            for j in range(records.shape[1]):
+                showList[i] += records[i][j] + "    "
+        self.ids["late"].text = str(records.shape[0])
+        self.ids["list"].item_strings = showList
+        wbk = xlwt.Workbook()
+        sheet = wbk.add_sheet("sheet1")
+        for i in range(records.shape[0]):
+            for j in range(records.shape[1]):
+                sheet.write(i, j, records[i][j])
+        wbk.save("../ExportFile/" + "Records-" + date + ".xls")
 
 
 class SuperAdministerApp(App):

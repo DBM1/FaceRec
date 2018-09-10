@@ -83,6 +83,8 @@ Builder.load_string("""
             TextInput:
                 id: password
                 hint_text: "Password"
+                password:True
+                password_mask:'●'
                 font_size: 20
                 size_hint: (0.25, 1/17)
                 pos_hint: {'center_x': 0.21, 'y': 0.48}
@@ -319,6 +321,8 @@ Builder.load_string("""
             TextInput:                       
                 id: previousPass
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.5}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -332,6 +336,8 @@ Builder.load_string("""
             TextInput:                       
                 id: newPass
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.4}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -345,6 +351,8 @@ Builder.load_string("""
             TextInput:                       
                 id: idetiNewPass
                 size_hint: (0.32, 0.05)
+                password:True
+                password_mask:'●'
                 pos_hint: {'center_x': 0.57, 'y': 0.3}
                 background_normal: 'UI/input_line.png'
                 background_active: 'UI/white.png'
@@ -391,6 +399,11 @@ class LoginScreen(Screen):
         id = self.ids.ID.text
         psw = self.ids.password.text
         res = emp.login(emp_id=id, psw=psw)
+        if(id == '' or psw == ''):
+            s = '输入为空'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
         if(res == 'success'):
             self.manager.current = 'mainEm'
         elif(res == 'no such id'):                                    #已修改为弹框
@@ -452,12 +465,17 @@ class SettingsEmScreen(Screen):
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
         if(new_psw == iden_psw):                                    #已修改为弹框
-            emp.change_psw(ori_psw, new_psw)
-            # self.ids.code.text = "密码修改成功"
-            s = "密码修改成功"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
+            if (emp.change_psw(ori_psw, new_psw) == 'true'):
+                # self.ids.code.text = "密码修改成功"
+                s = "密码修改成功"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
+            else:
+                s = "原密码输入不正确"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
         else:                                                       #已修改为弹框
             #self.ids.code.text = '两次密码不一致'
             s = '两次密码不一致'
