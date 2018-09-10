@@ -1,0 +1,32 @@
+2018-09-10 10:42:43,075 - DataBase.py[line:23] - INFO: database class is creating...
+2018-09-10 10:42:43,275 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-10 10:47:07,652 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:47:07,690 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:47:11,221 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:48:58,302 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:48:58,340 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:50:52,934 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:50:53,378 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:50:57,909 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:50:57,946 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:52:13,606 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:52:13,660 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:52:39,345 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:52:39,385 - DataBase.py[line:67] - INFO: update empinfo set password='00000' where emp_id='000001'
+2018-09-10 10:52:39,462 - DataBase.py[line:90] - DEBUG: database is closing
+2018-09-10 10:52:39,656 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-10 10:52:50,126 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:52:58,101 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:52:58,140 - DataBase.py[line:67] - INFO: update empinfo set password='000000' where emp_id='000001'
+2018-09-10 10:52:58,220 - DataBase.py[line:90] - DEBUG: database is closing
+2018-09-10 10:52:58,403 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-10 10:53:11,028 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:53:11,064 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:54:05,115 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:54:05,164 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:54:39,747 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:54:39,808 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:54:41,230 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:55:32,898 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 10:55:32,957 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-10 10:55:33,889 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001

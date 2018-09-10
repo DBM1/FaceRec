@@ -371,9 +371,9 @@ Builder.load_string("""
                 # background_normal: 'UI/input_line.png'
                 # background_active: 'UI/white.png'
                 
-            Image:
-                size_hint: (0.18, 0.1)
-                pos_hint: {'center_x': 0.47, 'y': 0.07}
+            #Image:
+                #size_hint: (0.18, 0.1)
+                #pos_hint: {'center_x': 0.47, 'y': 0.07}
 
             Button:
                 text: '确认修改'
@@ -400,7 +400,7 @@ class LoginScreen(Screen):
         id = self.ids.ID.text
         psw = self.ids.password.text
         a = 0
-        if(id == '' or psw == ''):
+        if(id == ''):
             s = 'ID输入为空'
             p = MyPopup()
             p.modify(s)
@@ -490,7 +490,22 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if(new_psw == iden_psw):                                    #已修改为弹框
+        if(ori_psw == ''):
+            s = "请输入原密码"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif(new_psw == ''):
+            s = "请输入新密码"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif(iden_psw == ''):
+            s = "请确认新密码"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif(new_psw == iden_psw):                                    #已修改为弹框
             if (emp.change_psw(ori_psw, new_psw) == 'true'):
                 # self.ids.code.text = "密码修改成功"
                 s = "密码修改成功"

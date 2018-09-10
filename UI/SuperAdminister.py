@@ -217,9 +217,9 @@ Builder.load_string("""
                 # background_normal: 'UI/input_line.png'
                 # background_active: 'UI/white.png'
                 
-            Image:
-                size_hint: (0.18, 0.1)
-                pos_hint: {'center_x': 0.47, 'y': 0.07}
+            #Image:
+                #size_hint: (0.18, 0.1)
+                #pos_hint: {'center_x': 0.47, 'y': 0.07}
 
             Button:
                 text: '确认修改'
@@ -607,8 +607,18 @@ class SettingsEmScreen(Screen):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if (ori_psw == "" or new_psw == "" or iden_psw == ""):
-            s = "密码不能为空"
+        if (ori_psw == ''):
+            s = "请输入原密码"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif (new_psw == ''):
+            s = "请输入新密码"
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+        elif (iden_psw == ''):
+            s = "请确认新密码"
             p = MyPopup()
             p.modify(s)
             p.open()
@@ -805,7 +815,7 @@ class AccountingAdScreen(Screen):
 
 class SuperAdministerApp(App):
     def build(self):
-        Window.fullscreen = "auto"
+        #Window.fullscreen = "auto"
         self.title = 'SuperAdminister'
         return ScreenManager()
 
