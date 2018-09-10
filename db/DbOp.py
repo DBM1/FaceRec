@@ -48,6 +48,119 @@ def add_record_info(emp_id, time):
         db.update(sql + "'" + str(int(not bool(last_rec[0][3]))) + "')")
 
 
+def update_record(time=str(datetime.datetime.now())):
+    year = str(time[0:4])
+    month = str(time[5:7])
+    day = str(time[8:10])
+
+    if int(day) > 1:
+        last_day = str(int(day) - 1)
+        last_month = month
+        last_year = year
+    else:
+        if int(month) > 1:
+            last_month = str(int(month) - 1)
+            last_day = str(calendar.monthrange(int(year), int(month))[1])
+            last_year = year
+        else:
+            last_year = str(int(year) - 1)
+            last_month = str(12)
+            last_day = str(31)
+
+    last_record = db.query("select * from record_" + last_year + last_month + " where time like "
+                                                                              "'" + last_year + "-" + last_month + "-" + last_day + "%' and state=1")
+    for i in last_record:
+        db.update("INSERT INTO `facepro`.`record_" + year + month + "` (`emp_id`, `time`,`department`, `state`) "
+                                                                    "VALUES ('" + i[0] + "', '" + time[0:19] + "','" +
+                  i[2] + "'," + "1")
+
+
+def update_am():
+    time = str(datetime.datetime.now())
+    year = str(time[0:4])
+    month = str(time[5:7])
+    day = str(time[8:10])
+
+    emp = db.query("select * from empinfo")
+    for i in emp:
+        new_date = year + "-" + month + "-" + day
+        result = db.query(
+            "select * from record_" + year + month + " where emp_id=" + i[0] + " and time like '" + new_date + "%'")
+        result = sorted(result)
+
+        last_rec = look_for(result, time2)
+        if last_rec == ():
+            # 旷工
+            db.update("INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                        "VALUES ('" + i[
+                          0] + "', '" + new_date + "', '" + i[2] + "', '3')")
+        else:
+            la_rec = look_for(result, time1)
+            if la_rec == ():
+                db.update(
+                    "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                      "VALUES ('" + i[0] + "', '" + result[0][
+                        1] + "', '" + i[2] + "', '1')")
+            if last_rec[3] == 0:
+                db.update(
+                    "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                      "VALUES ('" + i[0] + "', '" + last_rec[
+                        3] + "', '" + i[2] + "', '2')")
+
+
+def update_pm():
+    time = str(datetime.datetime.now())
+    year = str(time[0:4])
+    month = str(time[5:7])
+    day = str(time[8:10])
+    emp = db.query("select * from empinfo")
+    for i in emp:
+        new_date = year + "-" + month + "-" + day
+        result = db.query(
+            "select * from record_" + year + month + " where emp_id=" + i[0] + " and time like '" + new_date + "%'")
+        result = sorted(result)
+
+        last_rec = look_for(result, time4)
+        if last_rec == ():
+            # 旷工
+            db.update("INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                        "VALUES ('" + i[
+                          0] + "', '" + new_date + "', '" + i[2] + "', '3')")
+        else:
+            if last_rec[1] < new_date + " " + time3:
+                # 旷工
+                if last_rec[3] == 0:
+                    db.update(
+                        "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                          "VALUES ('" + i[
+                            0] + "', '" + new_date + "', '" + i[2] + "', '3')")
+                else:
+                    # 正常
+                    pass
+            else:
+                if last_rec[3] == 0:
+                    # 早退
+                    db.update(
+                        "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                          "VALUES ('" + i[0] + "', '" + last_rec[
+                            3] + "', '" + i[2] + "', '2')")
+                la_rec = look_for(result, time3)
+                if la_rec == ():
+                    # 迟到
+                    db.update(
+                        "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                          "VALUES ('" + i[0] + "', '" + result[0][
+                            1] + "', '" + i[2] + "', '1')")
+                else:
+                    if last_rec[3] == 1:
+                        pass
+                    else:
+                        db.update(
+                            "INSERT INTO `facepro`.`except_" + year + month + "` (`emp_id`, `time`, `department`, `state`) "
+                                                                              "VALUES ('" + i[0] + "', '" + result[0][
+                                1] + "', '" + i[2] + "', '1')")
+
+
 def look_for(result, ed_time="23:59:59"):
     # print(result[0])
     last_rec = None
@@ -57,171 +170,6 @@ def look_for(result, ed_time="23:59:59"):
         else:
             break
     return last_rec
-
-
-def am_state(emp_id, time):
-    year = str(time[0:4])
-    month = str(time[5:7])
-    day = str(time[8:10])
-
-    new_date = year + "-" + month + "-" + day
-    result = db.query(
-        "select * from record_" + year + month + " where emp_id=" + emp_id + " and time like '" + new_date + "%'")
-    result = sorted(result)
-    state = ""
-
-    # 是否旷工
-    last_rec = look_for(result, time2)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id + " and time<'" + new_date + "'")
-        re = sorted(re)
-        la_rec = look_for(re)
-        if (la_rec == None):
-            state += "1"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[1][11:19] < time1 and last_rec[3] == 0):
-            state += "1"
-        else:
-            state += "0"
-    if (state == "1"):
-        return "111"
-
-    # 是否迟到
-    last_rec = look_for(result, time1)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id)
-        re = sorted(re)
-        la_rec = look_for(re, time1)
-        if (la_rec == None):
-            state += "1"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[3] == 1):
-            state += "0"
-        else:
-            state += "1"
-
-    # 是否早退
-    last_rec = look_for(result, time2)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id)
-        re = sorted(re)
-        la_rec = look_for(re, time2)
-        if (la_rec == None):
-            state += "0"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[3] == 0):
-            state += "1"
-        else:
-            state += "0"
-
-    return state
-
-
-def pm_state(emp_id, time):
-    year = str(time[0:4])
-    month = str(time[5:7])
-    day = str(time[8:10])
-
-    new_date = year + "-" + month + "-" + day
-    result = db.query(
-        "select * from record_" + year + month + " where emp_id=" + emp_id + " and time like '" + new_date + "%'")
-    result = sorted(result)
-    state = ""
-
-    # 是否旷工
-    last_rec = look_for(result, time4)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id + " and time<'" + new_date + "'")
-        re = sorted(re)
-        la_rec = look_for(re)
-        if (la_rec == None):
-            state += "1"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[1][11:19] < time3 and last_rec[3] == 0):
-            state += "1"
-        else:
-            state += "0"
-    if (state == "1"):
-        return "111"
-
-    # 是否迟到
-    last_rec = look_for(result, time3)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id)
-        re = sorted(re)
-        la_rec = look_for(re, time3)
-        if (la_rec == None):
-            state += "1"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[3] == 1):
-            state += "0"
-        else:
-            state += "1"
-
-    # 是否早退
-    last_rec = look_for(result, time4)
-    if (last_rec == None):
-        re = db.query(
-            "select * from record_" + year + month + " where emp_id=" + emp_id)
-        re = sorted(re)
-        la_rec = look_for(re, time4)
-        if (la_rec == None):
-            state += "0"
-        else:
-            if (la_rec[3] == 1):
-                state += "0"
-            else:
-                state += "1"
-    else:
-        if (last_rec[3] == 0):
-            state += "1"
-        else:
-            state += "0"
-
-    return state
-
-
-def get_month_state_by_id(emp_id, time):
-    year = str(time[0:4])
-    month = str(time[5:7])
-
-    record_state = {}
-    for i in range(31):
-        state = am_state(emp_id, year + "-" + month + "-" + str(i + 1).zfill(2)) + \
-                pm_state(emp_id, year + "-" + month + "-" + str(i + 1).zfill(2))
-        record_state[i + 1] = state
-
-    return record_state
 
 
 def create_record_table(time):
@@ -274,9 +222,9 @@ def login(emp_id, psw):
             return "wrong password"
 
 
-def add_emp_info(emp_id,emp_name,emp_department,emp_photo):
+def add_emp_info(emp_id, emp_name, emp_department, emp_photo):
     db.update("INSERT INTO `facepro`.`empinfo` (`Emp_id`, `Emp_name`, `Emp_department`, `password`, `Emp_photo`) "
-              "VALUES ('"+emp_id+"', '"+emp_name+"', '"+emp_department+"', '"+emp_id+"', '"+emp_photo+"')")
+              "VALUES ('" + emp_id + "', '" + emp_name + "', '" + emp_department + "', '" + emp_id + "', '" + emp_photo + "')")
     return "true"
 
 
@@ -286,22 +234,23 @@ def get_record_and_state(emp_id, time):
     re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
     if re == ():
         return "wrong time"
+
     monthRange = calendar.monthrange(int(year), int(month))
 
     record = get_record_by_id(emp_id, time)
-    state = get_month_state_by_id(emp_id, time)
-    a, b, c, d = 0, 0, 0, 0  # 对应正常,迟到,早退,旷工
-    for i in range(monthRange[1]):
-        x = state[i + 1]
-        if x[0] == '1' or x[3] == '1':
+
+    except_record = db.query("select * from except_" + year + month + " where emp_id=" + emp_id)
+    a, b, c, d = monthRange[1]*2, 0, 0, 0
+    for i in except_record:
+        if i[3] == 1:
+            b += 1
+            a -= 1
+        if i[3] == 2:
+            c += 1
+            a -= 1
+        if i[3]:
             d += 1
-        else:
-            if x[1] == '1' or x[4] == '1':
-                b += 1
-            if x[2] == '1' or x[5] == '1':
-                c += 1
-            if x[0:3] == '000' and x[3:6] == '000':
-                a += 1
+            a -= 1
 
     state = str(a) + "," + str(b) + "," + str(c) + "," + str(d)
     state = tuple(state.split(","))
@@ -330,8 +279,8 @@ def change_psw(emp_id, ori_psw, new_psw):
 
 
 def get_info_by_name(emp_name):
-    result = db.query("select * from empinfo where Emp_name='" + emp_name+"'")
-    if result==():
+    result = db.query("select * from empinfo where Emp_name='" + emp_name + "'")
+    if result == ():
         return "None"
     re = ""
     for i in result:
@@ -342,164 +291,177 @@ def get_info_by_name(emp_name):
 def get_except_record(time):
     year = str(time[0:4])
     month = str(time[5:7])
+
     re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
     if re == ():
-        return 0,"wrong time"
-    monthRange = calendar.monthrange(int(year), int(month))
+        return "wrong time"
 
-    result_record=()
-    emp=db.query("select * from empinfo")
-    num=0
-    for i in emp:
-        for j in range(monthRange[1]):
-            print(j)
-            day=str(j+1).zfill(2)
-            new_date = year + "-" + month + "-" + day
-            result = db.query(
-                "select * from record_" + year + month + " where emp_id=" + i[0] + " and time like '" + new_date + "%'")
-            result = sorted(result)
-            state = ""
+    result = db.query("select * from except_" + year + month)
+    num = len(result)
+    result = str(num) + str(result)
+    return result
 
-            # 是否旷工
-            last_rec = look_for(result, time2)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0] + " and time<'" + new_date + "'")
-                re = sorted(re)
-                la_rec = look_for(re)
-                if (la_rec == None):
-                    result_record=result_record+(i[0],new_date,i[2],"旷工")
-                    num+=1
-                else:
-                    """"""
-                    if (la_rec[3] == 0):
-                        result_record += (i[0], new_date, i[2], "旷工")
-                        num += 1
-            else:
-                if (last_rec[1][11:19] < time1 and last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "旷工")
-                    num += 1
-
-            #print(result_record)
-            # 迟到
-            last_rec = look_for(result, time1)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0])
-                re = sorted(re)
-                la_rec = look_for(re, time1)
-                if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "迟到")
-                    num += 1
-                else:
-                    if (la_rec[3] == 1):
-                        pass
-                    else:
-                        result_record += (i[0], new_date, i[2], "迟到")
-                        num += 1
-            else:
-                if (last_rec[3] == 1):
-                    pass
-                else:
-                    result_record += (i[0], new_date, i[2], "迟到")
-                    num += 1
-
-                # 是否早退
-            last_rec = look_for(result, time2)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0])
-                re = sorted(re)
-                la_rec = look_for(re, time2)
-                if (la_rec == None):
-                    pass
-                else:
-                    if (la_rec[3] == 1):
-                        pass
-                    else:
-                        result_record += (i[0], new_date, i[2], "早退")
-                        num += 1
-            else:
-                if (last_rec[3] == 0):
-                    result_record += (i[0],new_date, i[2], "早退")
-                    num += 1
-                else:
-                    pass
-
-
-            # 下午
-            # 是否旷工
-            last_rec = look_for(result, time4)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0] + " and time<'" + new_date + "'")
-                re = sorted(re)
-                la_rec = look_for(re)
-                if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "旷工")
-                    num += 1
-                else:
-                    if (la_rec[3] == 1):
-                        pass
-                    else:
-                        result_record += (i[0], new_date, i[2], "旷工")
-                        num += 1
-            else:
-                if (last_rec[1][11:19] < time3 and last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "旷工")
-                    num += 1
-                else:
-                    pass
-
-
-            # 是否迟到
-            last_rec = look_for(result, time3)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0])
-                re = sorted(re)
-                la_rec = look_for(re, time3)
-                if (la_rec == None):
-                    result_record += (i[0], new_date, i[2], "迟到")
-                    num += 1
-                else:
-                    if (la_rec[3] == 1):
-                       pass
-                    else:
-                        result_record += (i[0], new_date, i[2], "迟到")
-                        num += 1
-            else:
-                if (last_rec[3] == 1):
-                    pass
-                else:
-                    result_record += (i[0], new_date, i[2], "1")
-                    num += 1
-
-            # 是否早退
-            last_rec = look_for(result, time4)
-            if (last_rec == None):
-                re = db.query(
-                    "select * from record_" + year + month + " where emp_id=" + i[0])
-                re = sorted(re)
-                la_rec = look_for(re, time4)
-                if (la_rec == None):
-                    pass
-                else:
-                    if (la_rec[3] == 1):
-                        pass
-                    else:
-                        result_record += (i[0], new_date, i[2], "早退")
-                        num += 1
-            else:
-                if (last_rec[3] == 0):
-                    result_record += (i[0], new_date, i[2], "早退")
-                    num += 1
-                else:
-                    pass
-
-    return num,result_record
+    # result_record = ()
+    # emp = db.query("select * from empinfo")
+    # num = 0
+    # for i in emp:
+    #     for j in range(monthRange[1]):
+    #         day = str(j + 1).zfill(2)
+    #         new_date = year + "-" + month + "-" + day
+    #         result = db.query(
+    #             "select * from record_" + year + month + " where emp_id=" + i[0] + " and time like '" + new_date + "%'")
+    #         result = sorted(result)
+    #         state = ""
+    #
+    #         # 是否旷工
+    #         last_rec = look_for(result, time2)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0] + " and time<'" + new_date + "'")
+    #             re = sorted(re)
+    #             la_rec = look_for(re)
+    #             if (la_rec == None):
+    #                 result_record = result_record + (i[0], new_date, i[2], "旷工")
+    #                 num += 1
+    #             else:
+    #                 """"""
+    #                 if (la_rec[3] == 0):
+    #                     result_record += (i[0], new_date, i[2], "旷工")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[1][11:19] < time1 and last_rec[3] == 0):
+    #                 result_record += (i[0], new_date, i[2], "旷工")
+    #                 num += 1
+    #
+    #         # print(result_record)
+    #         # 迟到
+    #         last_rec = look_for(result, time1)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0])
+    #             re = sorted(re)
+    #             la_rec = look_for(re, time1)
+    #             if (la_rec == None):
+    #                 result_record += (i[0], new_date, i[2], "迟到")
+    #                 num += 1
+    #             else:
+    #                 if (la_rec[3] == 1):
+    #                     pass
+    #                 else:
+    #                     result_record += (i[0], new_date, i[2], "迟到")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[3] == 1):
+    #                 pass
+    #             else:
+    #                 result_record += (i[0], new_date, i[2], "迟到")
+    #                 num += 1
+    #
+    #             # 是否早退
+    #         last_rec = look_for(result, time2)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0])
+    #             re = sorted(re)
+    #             la_rec = look_for(re, time2)
+    #             if (la_rec == None):
+    #                 pass
+    #             else:
+    #                 if (la_rec[3] == 1):
+    #                     pass
+    #                 else:
+    #                     result_record += (i[0], new_date, i[2], "早退")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[3] == 0):
+    #                 result_record += (i[0], new_date, i[2], "早退")
+    #                 num += 1
+    #             else:
+    #                 pass
+    #
+    #         # 下午
+    #         # 是否旷工
+    #         last_rec = look_for(result, time4)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0] + " and time<'" + new_date + "'")
+    #             re = sorted(re)
+    #             la_rec = look_for(re)
+    #             if (la_rec == None):
+    #                 result_record += (i[0], new_date, i[2], "旷工")
+    #                 num += 1
+    #             else:
+    #                 if (la_rec[3] == 1):
+    #                     pass
+    #                 else:
+    #                     result_record += (i[0], new_date, i[2], "旷工")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[1][11:19] < time3 and last_rec[3] == 0):
+    #                 result_record += (i[0], new_date, i[2], "旷工")
+    #                 num += 1
+    #             else:
+    #                 pass
+    #
+    #         # 是否迟到
+    #         last_rec = look_for(result, time3)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0])
+    #             re = sorted(re)
+    #             la_rec = look_for(re, time3)
+    #             if (la_rec == None):
+    #                 result_record += (i[0], new_date, i[2], "迟到")
+    #                 num += 1
+    #             else:
+    #                 if (la_rec[3] == 1):
+    #                     pass
+    #                 else:
+    #                     result_record += (i[0], new_date, i[2], "迟到")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[3] == 1):
+    #                 pass
+    #             else:
+    #                 result_record += (i[0], new_date, i[2], "1")
+    #                 num += 1
+    #
+    #         # 是否早退
+    #         last_rec = look_for(result, time4)
+    #         if (last_rec == None):
+    #             re = db.query(
+    #                 "select * from record_" + year + month + " where emp_id=" + i[0])
+    #             re = sorted(re)
+    #             la_rec = look_for(re, time4)
+    #             if (la_rec == None):
+    #                 pass
+    #             else:
+    #                 if (la_rec[3] == 1):
+    #                     pass
+    #                 else:
+    #                     result_record += (i[0], new_date, i[2], "早退")
+    #                     num += 1
+    #         else:
+    #             if (last_rec[3] == 0):
+    #                 result_record += (i[0], new_date, i[2], "早退")
+    #                 num += 1
+    #             else:
+    #                 pass
+    #
+    # print(datetime.datetime.now())
+    # return num, result_record
 
 
 def test():
-    re = db.query("select emp_department from empinfo where Emp_id='000001'")
-    print(re[0][0])
+    emp = db.query("select * from empinfo")
+    for j in emp:
+        for i in range(31):
+            db.update("INSERT INTO `facepro`.`record_201808` (`emp_id`, `time`,`department`, `state`) "
+                      "VALUES ('" + j[0] + "', '2018-08-" + str(i + 1).zfill(2) + " 08:00:00','department',1)")
+            db.update("INSERT INTO `facepro`.`record_201808` (`emp_id`, `time`,`department`, `state`) "
+                      "VALUES ('" + j[0] + "', '2018-08-" + str(i + 1).zfill(2) + " 11:40:00','department',0)")
+            db.update("INSERT INTO `facepro`.`record_201808` (`emp_id`, `time`,`department`, `state`) "
+                      "VALUES ('" + j[0] + "', '2018-08-" + str(i + 1).zfill(2) + " 13:30:00','department',1)")
+            db.update("INSERT INTO `facepro`.`record_201808` (`emp_id`, `time`,`department`, `state`) "
+                      "VALUES ('" + j[0] + "', '2018-08-" + str(i + 1).zfill(2) + " 18:00:00','department',0)")
+        print(j[0] + "," + str(i + 1))

@@ -3,6 +3,7 @@ import tensorflow as tf
 import os
 import cv2
 import shutil
+import random
 
 x_data = tf.placeholder(tf.float32, [None, 64, 64, 3])
 y_data = tf.placeholder(tf.float32, [None, None])
@@ -48,15 +49,15 @@ def cnnlayer(classNum):
     pool2 = maxpool(conv2)
     drop2 = dropout(pool2, keep_porb1)
 
-    w3 = weightvar([3, 3, 64, 64])
-    b3 = biasvar([64])
+    w3 = weightvar([3, 3, 64, 128])
+    b3 = biasvar([128])
     conv3 = tf.nn.relu(conv(drop2, w3) + b3)
     pool3 = maxpool(conv3)
     drop3 = dropout(pool3, keep_porb1)
 
-    w4 = weightvar([8 * 8 * 64, 512])
+    w4 = weightvar([8 * 8 * 128, 512])
     b4 = biasvar([512])
-    drop2_flat = tf.reshape(drop3, [-1, 8 * 8 * 64])
+    drop2_flat = tf.reshape(drop3, [-1, 8 * 8 * 128])
     dense = tf.nn.relu(tf.matmul(drop2_flat, w4) + b4)
     dropf = dropout(dense, keep_porb2)
 
@@ -95,9 +96,17 @@ def train(trainX, trainY, tfSavePath):
         trainY = np.concatenate(trainY, 0)
         testY = np.concatenate(testY, 0)
 
+        for i in range(trainX.shape[0]):
+            type = random.random()
+            if type < 0.33:
+                cv2.flip(trainX[i], 0)
+                trainX[i] = tf.image.random_contrast(trainX[i], 0.2, 1.8).eval()
+            elif type > 0.66:
+                cv2.flip(trainX[i], 1)
+                trainX[i] = tf.image.random_saturation(trainX[i], 0.2, 1.8).eval()
         batchSize = 10
         numBatch = trainY.shape[0] // batchSize
-        for n in range(20):
+        for n in range(50):
             r = np.random.permutation(trainX.shape[0])
             trainX = trainX[r, :]
             trainY = trainY[r, :]
@@ -202,6 +211,30 @@ def rec(tfsavepath, classnum):
         cv2.destroyAllWindows()
 
 
+def test():
+    imgpath = "../TrainImage/000000"
+    filename = os.listdir(imgpath)
+    testList = []
+    for name in filename:
+        img = cv2.imread(imgpath + '/' + name)
+        testList.append(img)
+    testList = np.array(testList)
+    print(testList.shape)
+    output = cnnlayer(2)
+    saver = tf.train.Saver()
+    with tf.Session() as sess:
+        saver.restore(sess, "./model/testmodel2")
+        result = sess.run(output, feed_dict={x_data: testList, keep_porb1: 1.0, keep_porb2: 1.0})
+        re = np.argmax(result, 1)
+        result = 0
+        for i in re:
+            result += i
+        print(result)
+
+
+# #
 # trainX, trainY = impimg()
-# train(trainX, trainY, "./model/testmodel1")
-# rec("./model/testmodel1", 2)
+# train(trainX, trainY, "./model/testmodel2")
+rec("./model/testmodel2", 2)
+
+# test()

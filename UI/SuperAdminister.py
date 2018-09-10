@@ -16,8 +16,6 @@ import os
 import re
 import xlwt
 
-PORT = 5920
-
 Builder.load_string("""
 <MyPopup>:
     size_hint: .3, .3
@@ -26,7 +24,7 @@ Builder.load_string("""
     Button:
         id:button
         text: 'Wrong Password!'
-        on_press: root.dismiss()
+        on_press: root.dismiss()·
 
 <BoxLayout>:
     padding: 10
