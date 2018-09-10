@@ -10,7 +10,7 @@ from kivy.uix.modalview import ModalView
 from Clients import EmpClient as func
 import re
 from kivy.uix.popup import Popup
-7
+import xlwt
 
 emp = func.EmpClient()
 PORT = 5920
@@ -59,6 +59,7 @@ Builder.load_string("""
 
             
 <LoginScreen>:
+    name : 'loginem'
     BoxLayout:
         orientation: 'vertical'
 
@@ -250,7 +251,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.66, 'y': 0.04}
                 background_normal: 'UI/button_normal.png'
                 background_down:'UI/button_down.png'
-                #on_release: 
+                on_release: root.export()
 
                 
 
@@ -400,7 +401,13 @@ class LoginScreen(Screen):
         psw = self.ids.password.text
         a = 0
         if(id == '' or psw == ''):
-            s = '输入为空'
+            s = 'ID输入为空'
+            p = MyPopup()
+            p.modify(s)
+            p.open()
+            a = 1
+        elif(psw == ''):
+            s = '密码输入为空'
             p = MyPopup()
             p.modify(s)
             p.open()
@@ -433,15 +440,19 @@ class MainEmScreen(Screen):
 
 
 class QueryEmScreen(Screen):
+    record = []
+    time = ''
+
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
         self.manager.transition = SlideTransition(direction="left")
+
     def Query(self):
         year = self.ids.Year.text
         month = self.ids.Month.text
-        time = year + '-' + month
-        res = emp.get_record_and_state(time)
+        QueryEmScreen.time = year + '-' + month
+        res = emp.get_record_and_state(QueryEmScreen.time)
         r = res[1:-1]
         comp = re.split(r"[(](.*?)[)]", r)
         date = re.findall('\d+', comp[-1])
@@ -449,14 +460,26 @@ class QueryEmScreen(Screen):
         self.ids.off.text = date[3]
         self.ids.early.text = date[2]
         self.ids.normal.text = date[0]
-        record = []
         for i in range(len(comp)):
             if i%2 == 1:
                 comp[i] = comp[i].replace("'", '')
-                record.append(comp[i])
-        self.ids.list.item_strings = record
+                QueryEmScreen.record.append(comp[i])
+        self.ids.list.item_strings = QueryEmScreen.record
         info = emp.get_info()
         self.ids.name.text = info[1]+','+info[0]+','+info[2]
+
+    def export(self):
+        l = self.manager.get_screen('loginem')
+        id = l.ids.ID.text
+        record = QueryEmScreen.record
+        wbk = xlwt.Workbook()
+        sheet = wbk.add_sheet("sheet1")
+        for i in range(len(record)):
+            item = record[i].split(',')
+            for j in range(len(item)):
+                sheet.write(i, j, item[j])
+        if not record == []:
+            wbk.save("../ExportFile/" + id + '_' + QueryEmScreen.time + ".xls")
 
 class SettingsEmScreen(Screen):
     def on_touch_move(self, touch):
@@ -485,6 +508,7 @@ class SettingsEmScreen(Screen):
             p = MyPopup()
             p.modify(s)
             p.open()
+
 
 class EmployeeApp(App):
     def build(self):
