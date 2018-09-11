@@ -121,18 +121,33 @@ Builder.load_string("""
 
         FloatLayout:
             Button:
-                size_hint: (0.29, 0.15)
+                size_hint: (0.29, 0.13)
                 pos_hint: {'center_x': 0.82, 'y': 0.52}
-                background_normal: 'UI/mainEm-query.png'
-                background_down: 'UI/mainEm-query-down.png'
+                background_normal: 'UI/mainAd-query2.png'
+                background_down: 'UI/mainAd-query-down2.png'
                 on_release:root.manager.current = 'queryEm'
 
             Button:
-                size_hint: (0.29, 0.15)
-                pos_hint: {'center_x': 0.82, 'y': 0.28}
-                background_normal: 'UI/mainEm-settings.png'
-                background_down:'UI/mainEm-settings-down.png'
-                on_release: root.ShiftToSetting()
+                size_hint: (0.29, 0.13)
+                pos_hint: {'center_x': 0.82, 'y': 0.35}
+                background_normal: 'UI/mainAd-setting.png'
+                background_down:'UI/mainAd-setting-down.png'
+                on_release: root.manager.current = 'settingsAd'
+                
+            Button:                                                 #主界面退出登录按钮
+                size_hint: (0.29, 0.13)
+                pos_hint: {'center_x': 0.82, 'y': 0.18}
+                background_normal: 'UI/mainEm-exit.png'
+                background_down:'UI/mainEm-exit-down.png'
+                # on_release: root.ShiftToSetting()
+                
+            Button:                                                 #主界面退出按钮
+                text:'退出'
+                size_hint: (0.12, 1/17)
+                pos_hint: {'center_x': 0.08, 'y': 0.03}
+                background_normal: 'UI/button1.png'
+                background_down: 'UI/button2.png'
+                # on_release:
 
 <QueryEmScreen>:
     name: 'queryEm'
@@ -453,6 +468,7 @@ class QueryEmScreen(Screen):
         month = self.ids.Month.text
         QueryEmScreen.time = year + '-' + month
         res = emp.get_record_and_state(QueryEmScreen.time)
+        print(res)
         if(res == 'None'):
             self.ids.late.text = '0'
             self.ids.off.text = '0'

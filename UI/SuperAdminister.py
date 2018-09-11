@@ -91,6 +91,15 @@ Builder.load_string("""
                 background_normal: 'UI/mainAd-setting.png'
                 background_down:'UI/mainAd-setting-down.png'
                 on_release: root.manager.current = 'settingsEm'
+
+            Button:                                                 #主界面退出按钮
+                text:'退出'
+                size_hint: (0.12, 1/17)
+                pos_hint: {'center_x': 0.08, 'y': 0.03}
+                background_normal: 'UI/button1.png'
+                background_down: 'UI/button2.png'
+                # on_release:
+                
 <LoginScreen>:
     BoxLayout:
         orientation: 'vertical'

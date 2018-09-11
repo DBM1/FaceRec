@@ -8,12 +8,14 @@ Builder.load_string('''
 <Node>:
     canvas:
         Color:
-            rgba: .1, .1, 0.8, 0.3 * root.alpha
+            rgba: 1, 1, 1, 0.3 * root.alpha
+            # rgba: .1, .1, 0.8, 0.3 * root.alpha
         Line:
             circle: (root.x, root.y,self.size1 / 2 )
             width: self.size1 / 33
         Color:
-            rgba: .01, .01, 0.8, 0.5 * root.alpha
+            rgba: 1, 1, 1, 0.3 * root.alpha
+            # rgba: .01, .01, 0.8, 0.5 * root.alpha
         Line:
             circle: (root.x, root.y ,self.size1 / 10)
             width: 20
