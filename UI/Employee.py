@@ -132,7 +132,11 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.82, 'y': 0.35}
                 background_normal: 'UI/mainAd-setting.png'
                 background_down:'UI/mainAd-setting-down.png'
+<<<<<<< HEAD
                 on_release: root.manager.current = 'settingsEm'
+=======
+                on_release: root.ShiftToSetting()
+>>>>>>> 255ddba7b2d2a0e826d45822caa6097a0f6a70f4
                 
             Button:                                                 #主界面退出登录按钮
                 size_hint: (0.29, 0.13)
@@ -147,7 +151,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.08, 'y': 0.03}
                 background_normal: 'UI/button1.png'
                 background_down: 'UI/button2.png'
-                # on_release:
+                on_release:root.close()
 
 <QueryEmScreen>:
     name: 'queryEm'
@@ -459,6 +463,9 @@ class MainEmScreen(Screen):
     def exit(self):
         self.manager.current = 'loginem'
 
+    def close(self):
+        Window.close()
+
 
 class QueryEmScreen(Screen):
     record = []
@@ -480,6 +487,7 @@ class QueryEmScreen(Screen):
             self.ids.off.text = '0'
             self.ids.early.text = '0'
             self.ids.normal.text = '0'
+            self.ids.list.item_strings = []
         else:
             r = res[1:-1]
             comp = re.split(r"[(](.*?)[)]", r)
