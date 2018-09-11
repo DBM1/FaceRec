@@ -132,7 +132,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.82, 'y': 0.35}
                 background_normal: 'UI/mainAd-setting.png'
                 background_down:'UI/mainAd-setting-down.png'
-                on_release: root.manager.current = 'settingsAd'
+                on_release: root.manager.current = 'settingsEm'
                 
             Button:                                                 #主界面退出登录按钮
                 size_hint: (0.29, 0.13)
