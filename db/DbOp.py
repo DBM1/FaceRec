@@ -193,6 +193,8 @@ def get_record_by_id(emp_id, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + emp_id)
+    if result==():
+        return "None"
     return result
 
 
@@ -200,6 +202,8 @@ def get_record_by_depart(department, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + department)
+    if result==():
+        return "None"
     return result
 
 
