@@ -98,8 +98,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.08, 'y': 0.03}
                 background_normal: 'UI/button1.png'
                 background_down: 'UI/button2.png'
-                # on_release:
-                
+                on_release: root.close()                
 <LoginScreen>:
     BoxLayout:
         orientation: 'vertical'
@@ -534,7 +533,8 @@ class ScreenManager(ScreenManager):
 
 
 class MainAdScreen(Screen):
-    pass
+    def close(self):
+        Window.close()
 
 
 class LoginScreen(Screen):
@@ -637,6 +637,8 @@ class QueryAdScreen(Screen):
     def fun(self):
         id = self.ids["ID"].text
         name = self.ids["name"].text
+        QueryAdScreen.recordTuple = ""
+        self.ids["lists"].item_strings = ""
         showList = []
         if id == "":
             if not name == "":
@@ -648,21 +650,23 @@ class QueryAdScreen(Screen):
                 p.open()
         else:
             QueryAdScreen.recordTuple = empclient.get_info(id)
-        if not QueryAdScreen.recordTuple[0] == "None":
-            len1 = len(QueryAdScreen.recordTuple)
-            for i in range(len1 // 5):
-                record = QueryAdScreen.recordTuple[0 + 5 * i] + "    " + QueryAdScreen.recordTuple[1 + 5 * i] + "    " + \
-                         QueryAdScreen.recordTuple[2 + 5 * i]
-                showList.append(record)
-            list = self.ids["lists"]
-            list.item_strings = showList
-            if len1 == 5:
-                self.manager.current = 'queryAdEm'
-        else:
-            s = "工号或姓名不存在"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
+        if not QueryAdScreen.recordTuple == "":
+            if not QueryAdScreen.recordTuple[0] == "None":
+                len1 = len(QueryAdScreen.recordTuple)
+                for i in range(len1 // 5):
+                    record = QueryAdScreen.recordTuple[0 + 5 * i] + "    " + QueryAdScreen.recordTuple[
+                        1 + 5 * i] + "    " + \
+                             QueryAdScreen.recordTuple[2 + 5 * i]
+                    showList.append(record)
+                list = self.ids["lists"]
+                list.item_strings = showList
+                if len1 == 5:
+                    self.manager.current = 'queryAdEm'
+            else:
+                s = "工号或姓名不存在"
+                p = MyPopup()
+                p.modify(s)
+                p.open()
 
 
 class QueryAdEmScreen(Screen):
@@ -684,6 +688,7 @@ class QueryAdEmScreen(Screen):
             p = MyPopup()
             p.modify(s)
             p.open()
+            self.ids.list.item_strings = ""
         else:
             r = res[1:-1]
             comp = re.split(r"[(](.*?)[)]", r)
@@ -742,12 +747,12 @@ class AccountingAdScreen(Screen):
         month = self.ids["month"].text
         AccountingAdScreen.date = year + "-" + month
         receive = empclient.get_except_record(AccountingAdScreen.date)
-        print(receive)
         if (receive == "wrong time") or (receive == "None"):
-            s = "数据查询失败"
-            p = MyPopup()
-            p.modify(s)
-            p.open()
+            # s = "数据查询失败"
+            # p = MyPopup()
+            # p.modify(s)
+            # p.open()
+            self.ids["list"].item_strings = ""
         else:
             par = r'\((.*)\)'
             receive = receive.replace("\'", '')
