@@ -193,7 +193,7 @@ def get_record_by_id(emp_id, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + emp_id)
-    if result==():
+    if result == ():
         return "None"
     return result
 
@@ -202,7 +202,7 @@ def get_record_by_depart(department, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + department)
-    if result==():
+    if result == ():
         return "None"
     return result
 
@@ -211,7 +211,7 @@ def get_record_by_name(name, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + name)
-    if result==():
+    if result == ():
         return "None"
     return result
 
@@ -301,15 +301,16 @@ def get_except_record(time):
 
     re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
     if re == ():
-        return "None "
+        return 0, "None"
 
     result = db.query("select * from except_" + year + month)
-    re=()
+    re = ()
     for i in result:
-        re+=i
+        re += i
     num = len(result)
     result = str(num) + str(re)
-    return num,result
+    print(num, result)
+    return num, result
 
     # result_record = ()
     # emp = db.query("select * from empinfo")

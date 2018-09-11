@@ -1,0 +1,8 @@
+2018-09-10 14:58:44,798 - DataBase.py[line:23] - INFO: database class is creating...
+2018-09-10 14:58:45,002 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-10 14:59:03,274 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:00:20,210 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-10 15:01:32,450 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000000
+2018-09-10 15:03:32,798 - DataBase.py[line:62] - ERROR: query database exception, (1317, 'Query execution was interrupted')
+2018-09-10 15:03:32,798 - DataBase.py[line:62] - ERROR: query database exception, (2013, 'Lost connection to MySQL server during query')
+2018-09-10 15:03:32,798 - DataBase.py[line:62] - ERROR: query database exception, (2013, 'Lost connection to MySQL server during query')

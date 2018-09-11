@@ -679,7 +679,7 @@ class QueryAdEmScreen(Screen):
         time = year + '-' + month
         QueryAdEmScreen.Time = time
         res = empclient.get_record_and_state(time, QueryAdScreen.recordTuple[0])
-        if (res == "wrong time") or (res =="None"):
+        if (res == "wrong time") or (res == "None"):
             s = "数据查询失败"
             p = MyPopup()
             p.modify(s)
@@ -742,7 +742,8 @@ class AccountingAdScreen(Screen):
         month = self.ids["month"].text
         AccountingAdScreen.date = year + "-" + month
         receive = empclient.get_except_record(AccountingAdScreen.date)
-        if receive == "wrong time":
+        print(receive)
+        if (receive == "wrong time") or (receive == "None"):
             s = "数据查询失败"
             p = MyPopup()
             p.modify(s)

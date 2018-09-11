@@ -2,10 +2,11 @@ import socket
 import configparser
 import os
 
+
 class EmpClient:
     def __init__(self):
         self.cf = configparser.ConfigParser()
-        self.cf.read(os.path.dirname(os.getcwd())+"\config.conf")
+        self.cf.read(os.path.dirname(os.getcwd()) + "\config.conf")
         self.server_host = self.cf.get("Server", "host")
         self.server_port = int(self.cf.get("Server", "port"))
 
@@ -60,20 +61,20 @@ class EmpClient:
         result = self.recv(102400)
         return result
 
-    def add_emp_info(self,emp_id,emp_name,emp_department,emp_photo):
-        info="add_emp_info,"+emp_id+","+emp_name+","+emp_department+","+emp_photo
+    def add_emp_info(self, emp_id, emp_name, emp_department, emp_photo):
+        info = "add_emp_info," + emp_id + "," + emp_name + "," + emp_department + "," + emp_photo
         self.send(info)
-        result=self.recv()
+        result = self.recv()
         return result
 
-    def get_info_by_name(self,name):
+    def get_info_by_name(self, name):
         info = "get_info_by_name," + name
         self.send(info)
         result = self.recv()
         result = tuple(result.split(","))
         return result
 
-    def get_except_record(self,time):
-        self.send("get_except_record,"+time)
+    def get_except_record(self, time):
+        self.send("get_except_record," + time)
         result = self.recv(1024000)
         return result

@@ -139,7 +139,7 @@ Builder.load_string("""
                 pos_hint: {'center_x': 0.82, 'y': 0.18}
                 background_normal: 'UI/mainEm-exit.png'
                 background_down:'UI/mainEm-exit-down.png'
-                # on_release: root.ShiftToSetting()
+                on_release: root.exit()
                 
             Button:                                                 #主界面退出按钮
                 text:'退出'
@@ -415,13 +415,13 @@ class LoginScreen(Screen):
         id = self.ids.ID.text
         psw = self.ids.password.text
         a = 0
-        if(id == ''):
+        if (id == ''):
             s = 'ID输入为空'
             p = MyPopup()
             p.modify(s)
             p.open()
             a = 1
-        elif(psw == ''):
+        elif (psw == ''):
             s = '密码输入为空'
             p = MyPopup()
             p.modify(s)
@@ -430,6 +430,8 @@ class LoginScreen(Screen):
         if (a == 0):
             res = emp.login(emp_id=id, psw=psw)
             if (res == 'success'):
+                self.ids.ID.text = ""
+                self.ids.password.text = ""
                 self.manager.current = 'mainEm'
             elif (res == 'no such id'):  # 已修改为弹框
                 # self.ids.boarder.text = "no such id"
@@ -444,6 +446,7 @@ class LoginScreen(Screen):
                 p.modify(s)
                 p.open()
 
+
 class MainEmScreen(Screen):
     def ShiftToSetting(self):
         self.manager.current = 'settingsEm'
@@ -452,6 +455,9 @@ class MainEmScreen(Screen):
         s.ids.ID.text = info[1]
         s.ids.name.text = info[0]
         s.ids.apartment.text = info[2]
+
+    def exit(self):
+        self.manager.current = 'loginem'
 
 
 class QueryEmScreen(Screen):
@@ -469,7 +475,7 @@ class QueryEmScreen(Screen):
         QueryEmScreen.time = year + '-' + month
         res = emp.get_record_and_state(QueryEmScreen.time)
         print(res)
-        if(res == 'None'):
+        if (res == 'None'):
             self.ids.late.text = '0'
             self.ids.off.text = '0'
             self.ids.early.text = '0'
@@ -505,31 +511,33 @@ class QueryEmScreen(Screen):
         if not record == []:
             wbk.save("../ExportFile/" + id + '_' + QueryEmScreen.time + ".xls")
 
+
 class SettingsEmScreen(Screen):
     def on_touch_move(self, touch):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "mainEm"
         self.manager.transition = SlideTransition(direction="left")
+
     def ChangeInfo(self):
         ori_psw = self.ids.previousPass.text
         new_psw = self.ids.newPass.text
         iden_psw = self.ids.idetiNewPass.text
-        if(ori_psw == ''):
+        if (ori_psw == ''):
             s = "请输入原密码"
             p = MyPopup()
             p.modify(s)
             p.open()
-        elif(new_psw == ''):
+        elif (new_psw == ''):
             s = "请输入新密码"
             p = MyPopup()
             p.modify(s)
             p.open()
-        elif(iden_psw == ''):
+        elif (iden_psw == ''):
             s = "请确认新密码"
             p = MyPopup()
             p.modify(s)
             p.open()
-        elif(new_psw == iden_psw):                                    #已修改为弹框
+        elif (new_psw == iden_psw):  # 已修改为弹框
             if (emp.change_psw(ori_psw, new_psw) == 'true'):
                 # self.ids.code.text = "密码修改成功"
                 s = "密码修改成功"
@@ -541,8 +549,8 @@ class SettingsEmScreen(Screen):
                 p = MyPopup()
                 p.modify(s)
                 p.open()
-        else:                                                       #已修改为弹框
-            #self.ids.code.text = '两次密码不一致'
+        else:  # 已修改为弹框
+            # self.ids.code.text = '两次密码不一致'
             s = '两次密码不一致'
             p = MyPopup()
             p.modify(s)
@@ -556,7 +564,7 @@ class EmployeeApp(App):
         return ScreenManager()
 
 
-#if __name__ == '__main__':
+# if __name__ == '__main__':
 #    Config.set('graphics', 'width', '800')
 #    Config.set('graphics', 'height', '600')
 
