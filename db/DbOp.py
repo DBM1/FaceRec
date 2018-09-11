@@ -211,6 +211,8 @@ def get_record_by_name(name, time=None):
     year = str(time[0:4])
     month = str(time[5:7])
     result = db.query("select * from record_" + year + month + " where emp_id=" + name)
+    if result==():
+        return "None"
     return result
 
 
@@ -237,7 +239,7 @@ def get_record_and_state(emp_id, time):
     month = str(time[5:7])
     re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
     if re == ():
-        return "wrong time"
+        return "None"
 
     monthRange = calendar.monthrange(int(year), int(month))
 
@@ -245,7 +247,7 @@ def get_record_and_state(emp_id, time):
     if record == ():
         return "None"
     except_record = db.query("select * from except_" + year + month + " where emp_id=" + emp_id)
-    a, b, c, d = monthRange[1]*2, 0, 0, 0
+    a, b, c, d = monthRange[1], 0, 0, 0
     for i in except_record:
         if i[3] == 1:
             b += 1
@@ -299,7 +301,7 @@ def get_except_record(time):
 
     re = db.query("SELECT table_name FROM information_schema.TABLES WHERE table_name ='record_" + year + month + "'")
     if re == ():
-        return "wrong time"
+        return "None "
 
     result = db.query("select * from except_" + year + month)
     re=()

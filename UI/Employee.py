@@ -453,20 +453,28 @@ class QueryEmScreen(Screen):
         month = self.ids.Month.text
         QueryEmScreen.time = year + '-' + month
         res = emp.get_record_and_state(QueryEmScreen.time)
-        r = res[1:-1]
-        comp = re.split(r"[(](.*?)[)]", r)
-        date = re.findall('\d+', comp[-1])
-        self.ids.late.text = date[1]
-        self.ids.off.text = date[3]
-        self.ids.early.text = date[2]
-        self.ids.normal.text = date[0]
-        for i in range(len(comp)):
-            if i%2 == 1:
-                comp[i] = comp[i].replace("'", '')
-                QueryEmScreen.record.append(comp[i])
-        self.ids.list.item_strings = QueryEmScreen.record
-        info = emp.get_info()
-        self.ids.name.text = info[1]+','+info[0]+','+info[2]
+        if(res == 'None'):
+            self.ids.late.text = '0'
+            self.ids.off.text = '0'
+            self.ids.early.text = '0'
+            self.ids.normal.text = '0'
+        else:
+            r = res[1:-1]
+            comp = re.split(r"[(](.*?)[)]", r)
+            date = re.findall('\d+', comp[-1])
+
+            self.ids.late.text = date[1]
+            self.ids.off.text = date[3]
+            self.ids.early.text = date[2]
+            self.ids.normal.text = date[0]
+
+            for i in range(len(comp)):
+                if i % 2 == 1:
+                    comp[i] = comp[i].replace("'", '')
+                    QueryEmScreen.record.append(comp[i])
+            self.ids.list.item_strings = QueryEmScreen.record
+            info = emp.get_info()
+            self.ids.name.text = info[1] + ',' + info[0] + ',' + info[2]
 
     def export(self):
         l = self.manager.get_screen('loginem')
