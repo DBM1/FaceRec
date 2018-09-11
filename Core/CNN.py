@@ -45,33 +45,45 @@ def cnnlayer(classNum):
 
     w2 = weightvar([3, 3, 64, 64])
     b2 = biasvar([64])
-    conv2 = tf.nn.relu(conv(drop1, w2) + b2)
+    conv2 = tf.nn.leaky_relu(conv(drop1, w2) + b2)
     pool2 = maxpool(conv2)
     drop2 = dropout(pool2, keep_porb1)
 
     w3 = weightvar([3, 3, 64, 128])
     b3 = biasvar([128])
-    conv3 = tf.nn.relu(conv(drop2, w3) + b3)
+    conv3 = tf.nn.leaky_relu(conv(drop2, w3) + b3)
     pool3 = maxpool(conv3)
     drop3 = dropout(pool3, keep_porb1)
 
-    w4 = weightvar([8 * 8 * 128, 512])
-    b4 = biasvar([512])
+    w4 = weightvar([8 * 8 * 128, 256])
+    b4 = biasvar([256])
     drop2_flat = tf.reshape(drop3, [-1, 8 * 8 * 128])
-    dense = tf.nn.relu(tf.matmul(drop2_flat, w4) + b4)
+    dense = tf.nn.leaky_relu(tf.matmul(drop2_flat, w4) + b4)
     dropf = dropout(dense, keep_porb2)
 
-    w5 = weightvar([512, classNum])
+    w5 = weightvar([256, classNum])
     b5 = biasvar([classNum])
     out = tf.matmul(dropf, w5) + b5
 
     return out
 
 
+def addGaussianNoise(image, percetage):
+    G_Noiseimg = image
+    G_NoiseNum = int(percetage * image.shape[0] * image.shape[1])
+    for i in range(G_NoiseNum):
+        temp_x = np.random.randint(0, 63)
+        temp_y = np.random.randint(0, 63)
+        G_Noiseimg[temp_x][temp_y] = 255
+    return G_Noiseimg
+
+
 def train(trainX, trainY, tfSavePath):
     out = cnnlayer(trainY.shape[1])
     crossEntropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=out, labels=y_data))
-    trainStep = tf.train.AdamOptimizer(0.001).minimize(crossEntropy)
+    global_step = tf.Variable(0, trainable=False)
+    rate = tf.train.exponential_decay(0.001, global_step, 1000, 0.96, True)
+    trainStep = tf.train.AdamOptimizer(rate).minimize(crossEntropy, global_step)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(out, 1), tf.argmax(y_data, 1)), tf.float32))
 
     length = trainY.shape[0]
@@ -95,18 +107,25 @@ def train(trainX, trainY, tfSavePath):
         testX = np.concatenate(testX, 0)
         trainY = np.concatenate(trainY, 0)
         testY = np.concatenate(testY, 0)
-
         for i in range(trainX.shape[0]):
             type = random.random()
-            if type < 0.33:
+            if type < 0.40:
                 cv2.flip(trainX[i], 0)
                 trainX[i] = tf.image.random_contrast(trainX[i], 0.2, 1.8).eval()
-            elif type > 0.66:
+                trainX[i] = addGaussianNoise(trainX[i], 0.15)
+            elif type > 0.60:
                 cv2.flip(trainX[i], 1)
                 trainX[i] = tf.image.random_saturation(trainX[i], 0.2, 1.8).eval()
+                trainX[i] = addGaussianNoise(trainX[i], 0.1)
+
+        # cv2.imshow("test", trainX[500])
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
         batchSize = 10
         numBatch = trainY.shape[0] // batchSize
-        for n in range(50):
+        n = 0
+        num = 0
+        while n < 5:
             r = np.random.permutation(trainX.shape[0])
             trainX = trainX[r, :]
             trainY = trainY[r, :]
@@ -114,9 +133,17 @@ def train(trainX, trainY, tfSavePath):
                 batchX = trainX[i * batchSize:(i + 1) * batchSize]
                 batchY = trainY[i * batchSize: (i + 1) * batchSize]
                 sess.run([trainStep, crossEntropy],
-                         feed_dict={x_data: batchX, y_data: batchY, keep_porb1: 0.75, keep_porb2: 0.75})
+                         feed_dict={x_data: batchX, y_data: batchY, keep_porb1: 0.65, keep_porb2: 0.65})
             acc = accuracy.eval({x_data: testX, y_data: testY, keep_porb1: 1.0, keep_porb2: 1.0})
             print("Traversal:", n, " Accuary:", acc)
+            if (acc > 0.985):
+                n += 1
+            else:
+                n = 0
+            num += 1
+            if num > 500:
+                break
+            print(num)
         # for j in range(3):
         #     trainX = np.vstack((trainX[0:800], trainXholder[400 * (j + 2):400 * (j + 2)+300]))
         #     print(trainX.shape)
@@ -212,7 +239,7 @@ def rec(tfsavepath, classnum):
 
 
 def test():
-    imgpath = "../TrainImage/000000"
+    imgpath = "../TestImage/test1"
     filename = os.listdir(imgpath)
     testList = []
     for name in filename:
@@ -223,7 +250,7 @@ def test():
     output = cnnlayer(2)
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        saver.restore(sess, "./model/testmodel2")
+        saver.restore(sess, "./model/testmodel1")
         result = sess.run(output, feed_dict={x_data: testList, keep_porb1: 1.0, keep_porb2: 1.0})
         re = np.argmax(result, 1)
         result = 0
@@ -231,9 +258,9 @@ def test():
             result += i
         print(result)
 
-# #
-# trainX, trainY = impimg()
-# train(trainX, trainY, "./model/testmodel2")
-# rec("./model/testmodel2", 2)
 
-# test()
+#
+# trainX, trainY = impimg()
+# train(trainX, trainY, "./model/testmodel1")
+# rec("./model/testmodel2", 2)
+test()
