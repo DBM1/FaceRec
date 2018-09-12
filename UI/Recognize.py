@@ -1,4 +1,6 @@
-# coding=utf-8
+﻿# coding=utf-8
+import sys
+sys.path.append('../')
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.core.window import Window

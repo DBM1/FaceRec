@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 import socketserver
 import configparser
 import DbOp
