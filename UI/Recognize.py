@@ -101,9 +101,8 @@ class KivyCamera(Image):
         super(KivyCamera, self).__init__()
 
         self.classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
-        self.path = "../TrainImage"
-        self.filename = os.listdir(self.path)
-        self.jugement = np.zeros([classnum])
+        self.filename = filename
+        self.jugement = np.zeros([len(self.filename)])
 
         KivyCamera.capturing = True
         self.capture = cv2.VideoCapture(0)
@@ -173,10 +172,14 @@ class RecognizeApp(App):
 
 
 with tf.Session() as sess:
-    classnum = 2
+    f = open("../Core/id.txt", 'r')
+    filename = f.read()
+    filename = filename.split("*")
+    filename.remove("")
+    classnum = len(filename)
     output = CNN.cnnlayer(classnum)
     saver = tf.train.Saver()
-    saver.restore(sess, "../Core/model/testmodel1")
+    saver.restore(sess, "../Core/model/testmodel")
     eng = pyttsx3.init()
     app = RecognizeApp()
     app.run()
