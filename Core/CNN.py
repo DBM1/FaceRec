@@ -51,20 +51,20 @@ def cnnlayer(classNum):
 
     w2 = weightvar([3, 3, 64, 64])
     b2 = biasvar([64])
-    conv2 = tf.nn.leaky_relu(conv(drop1, w2) + b2)
+    conv2 = tf.nn.relu(conv(drop1, w2) + b2)
     pool2 = maxpool(conv2)
     drop2 = dropout(pool2, keep_porb1)
 
     w3 = weightvar([3, 3, 64, 128])
     b3 = biasvar([128])
-    conv3 = tf.nn.leaky_relu(conv(drop2, w3) + b3)
+    conv3 = tf.nn.relu(conv(drop2, w3) + b3)
     pool3 = maxpool(conv3)
     drop3 = dropout(pool3, keep_porb1)
 
     w4 = weightvar([8 * 8 * 128, 256])
     b4 = biasvar([256])
     drop2_flat = tf.reshape(drop3, [-1, 8 * 8 * 128])
-    dense = tf.nn.leaky_relu(tf.matmul(drop2_flat, w4) + b4)
+    dense = tf.nn.relu(tf.matmul(drop2_flat, w4) + b4)
     dropf = dropout(dense, keep_porb2)
 
     w5 = weightvar([256, classNum])
@@ -88,7 +88,7 @@ def train(trainX, trainY, tfSavePath):
     out = cnnlayer(trainY.shape[1])
     crossEntropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=out, labels=y_data))
     global_step = tf.Variable(0, trainable=False)
-    rate = tf.train.exponential_decay(0.001, global_step, 1000, 0.95, True)
+    rate = tf.train.exponential_decay(0.001, global_step, 1000, 0.93, True)
     trainStep = tf.train.AdamOptimizer(rate).minimize(crossEntropy, global_step)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(out, 1), tf.argmax(y_data, 1)), tf.float32))
 
@@ -126,14 +126,11 @@ def train(trainX, trainY, tfSavePath):
                 trainX[i] = tf.image.random_saturation(trainX[i], 0.2, 1.8).eval()
                 trainX[i] = addGaussianNoise(trainX[i], 0.1)
 
-        # cv2.imshow("test", trainX[500])
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         batchSize = 10
         numBatch = trainY.shape[0] // batchSize
         n = 0
         num = 0
-        while n < 3:
+        while n < 4:
             r = np.random.permutation(trainX.shape[0])
             trainX = trainX[r, :]
             trainY = trainY[r, :]
@@ -149,7 +146,7 @@ def train(trainX, trainY, tfSavePath):
             else:
                 n = 0
             num += 1
-            if num > 200 and acc > 0.985:
+            if num > 200 and acc >= 0.99:
                 break
             print(num)
         saver.save(sess, tfSavePath)
@@ -356,15 +353,16 @@ def rec(tfsavepath):
 
 def test():
     imgpath = "../TestImage/test1"
-    f = open("./id.txt", "r")
-    filename = f.read()
-    filename = filename.split('*')
-    filename.remove("")
+    filename = os.listdir(imgpath)
     testList = []
     for name in filename:
         img = cv2.imread(imgpath + '/' + name)
         testList.append(img)
     testList = np.array(testList)
+    f = open("./id.txt", "r")
+    filename = f.read()
+    filename = filename.split('*')
+    filename.remove("")
     output = cnnlayer(len(filename))
     saver = tf.train.Saver()
     with tf.Session() as sess:
@@ -376,8 +374,9 @@ def test():
             result += i
         print(result)
 
+
 #
 # trainX, trainY = impimg()
 # train(trainX, trainY, "./model/testmodel")
-# rec("./model/testmodel")
+rec("./model/testmodel")
 # test()
