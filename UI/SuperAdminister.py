@@ -725,6 +725,8 @@ class QueryAdEmScreen(Screen):
                 item = record[i].split(',')
                 for j in range(len(item)):
                     sheet.write(i, j, item[j])
+            sheet.col(1).width = 22 * 256
+            sheet.col(2).width = 12 * 256
             wbk.save("../ExportFile/" + QueryAdScreen.recordTuple[0] + '-' + QueryAdEmScreen.Time + ".xls")
         else:
             s = "导出记录为空"
@@ -776,6 +778,8 @@ class AccountingAdScreen(Screen):
             for i in range(records.shape[0]):
                 for j in range(records.shape[1]):
                     sheet.write(i, j, records[i][j])
+            sheet.col(1).width = 22 * 256
+            sheet.col(2).width = 12 * 256
             wbk.save("../ExportFile/" + "Records-" + AccountingAdScreen.date + ".xls")
         else:
             s = "导出记录为空"
