@@ -494,7 +494,7 @@ class KivyCamera(Image):
         super(KivyCamera, self).__init__()
 
         self.classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
-        self.path = "../TrainImage/" + id
+        self.path = "../NewImage/" + id
         if not os.path.exists(self.path):
             os.makedirs(self.path)
 

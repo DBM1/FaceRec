@@ -117,13 +117,11 @@ def train(trainX, trainY, tfSavePath):
         testY = testY[:800]
         for i in range(trainX.shape[0]):
             type = random.random()
-            if type < 0.40:
+            if type < 0.30:
                 cv2.flip(trainX[i], 0)
-                trainX[i] = tf.image.random_contrast(trainX[i], 0.2, 1.8).eval()
                 trainX[i] = addGaussianNoise(trainX[i], 0.15)
-            elif type > 0.60:
+            elif type > 0.70:
                 cv2.flip(trainX[i], 1)
-                trainX[i] = tf.image.random_saturation(trainX[i], 0.2, 1.8).eval()
                 trainX[i] = addGaussianNoise(trainX[i], 0.1)
 
         batchSize = 10
@@ -185,13 +183,11 @@ def addTrain(trainX, trainY, tfSavePath):
         testY = testY[:800]
         for i in range(trainX.shape[0]):
             type = random.random()
-            if type < 0.40:
+            if type < 0.30:
                 cv2.flip(trainX[i], 0)
-                trainX[i] = tf.image.random_contrast(trainX[i], 0.2, 1.8).eval()
                 trainX[i] = addGaussianNoise(trainX[i], 0.15)
-            elif type > 0.60:
+            elif type > 0.70:
                 cv2.flip(trainX[i], 1)
-                trainX[i] = tf.image.random_saturation(trainX[i], 0.2, 1.8).eval()
                 trainX[i] = addGaussianNoise(trainX[i], 0.1)
 
         batchSize = 10
@@ -218,6 +214,7 @@ def addTrain(trainX, trainY, tfSavePath):
                 break
             print(num)
         saver.save(sess, tfSavePath)
+    commitAdd()
 
 
 def impimg():
@@ -225,7 +222,7 @@ def impimg():
     filename = os.listdir(path)
     length = len(filename)
     imgList = []
-    labelList = np.zeros([400 * length, length], int)
+    labelList = np.zeros([400 * length, 100], int)
     index = 0
     f = open("./id.txt", "w")
     for name in filename:
@@ -244,10 +241,20 @@ def impimg():
     imgList = np.array(imgList)
     return imgList, labelList
 
+def commitAdd():
+    addPath = "../NewImage"
+    filenameNew = os.listdir(addPath)
+    f = open("./id.txt", 'a+')
+    for name in filenameNew:
+        pngPath = addPath + '/' + name
+        pngList = os.listdir(pngPath)
+        if len(pngList) == 400:
+            f.write("*" + name)
+            shutil.move(pngPath, "../TrainImage")
 
 def addimpimg():
     path = "../TrainImage"
-    addPath = "../TestImage"
+    addPath = "../NewImage"
     filenameOld = os.listdir(path)
     filenameNew = os.listdir(addPath)
     lengthOld = len(filenameOld)
@@ -269,14 +276,14 @@ def addimpimg():
         pngPath = addPath + '/' + name
         pngList = os.listdir(pngPath)
         if len(pngList) == 400:
-            f.write("*" + name)
+            pass
         else:
             print("Incorrect PNG number:" + pngPath)
             shutil.rmtree(pngPath)
             lengthNew -= 1
 
-    labelListOld = np.zeros([400 * lengthOld, lengthOld + lengthNew], int)
-    labelListNew = np.zeros([400 * lengthNew, lengthOld + lengthNew], int)
+    labelListOld = np.zeros([400 * lengthOld, 100], int)
+    labelListNew = np.zeros([400 * lengthNew, 100], int)
 
     for name in filenameOld:
         for i in range(400):
@@ -285,11 +292,9 @@ def addimpimg():
         index += 1
 
     for name in filenameNew:
-        pngPath = addPath + '/' + name
         for i in range(400):
-            imgListNew.append(cv2.imread("../TestImage/%s/%d.png" % (name, i)))
+            imgListNew.append(cv2.imread("../NewImage/%s/%d.png" % (name, i)))
             labelListNew[400 * (index - lengthOld) + i][index] = 1
-        shutil.move(pngPath, "../TrainImage")
         index += 1
 
     labelListOld = labelListOld[0:400 * lengthOld]
@@ -313,7 +318,7 @@ def rec(tfsavepath):
     filename = f.read()
     filename = filename.split('*')
     filename.remove("")
-    classnum = len(filename)
+    classnum = 100
     cap = cv2.VideoCapture(0)
     classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
     output = cnnlayer(classnum)
@@ -324,7 +329,6 @@ def rec(tfsavepath):
         saver.restore(sess, tfsavepath)
         while 1:
             ret, img = cap.read()
-            # gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = classifier.detectMultiScale(img, 1.1, 3, minSize=(150, 150))
             for (x, y, w, h) in faces:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
@@ -352,7 +356,7 @@ def rec(tfsavepath):
 
 
 def test():
-    imgpath = "../TestImage/test1"
+    imgpath = "../NewImage/test1"
     filename = os.listdir(imgpath)
     testList = []
     for name in filename:
@@ -363,7 +367,7 @@ def test():
     filename = f.read()
     filename = filename.split('*')
     filename.remove("")
-    output = cnnlayer(len(filename))
+    output = cnnlayer(100)
     saver = tf.train.Saver()
     with tf.Session() as sess:
         saver.restore(sess, "./model/testmodel")
@@ -374,9 +378,3 @@ def test():
             result += i
         print(result)
 
-
-#
-# trainX, trainY = impimg()
-# train(trainX, trainY, "./model/testmodel")
-rec("./model/testmodel")
-# test()

@@ -176,7 +176,7 @@ with tf.Session() as sess:
     filename = f.read()
     filename = filename.split("*")
     filename.remove("")
-    classnum = len(filename)
+    classnum = 100
     output = CNN.cnnlayer(classnum)
     saver = tf.train.Saver()
     saver.restore(sess, "../Core/model/testmodel")
