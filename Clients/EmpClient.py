@@ -78,3 +78,8 @@ class EmpClient:
         self.send("get_except_record," + time)
         result = self.recv(1024000)
         return result
+
+    def get_last_id(self):
+        self.send("get_last_id,")
+        result = self.recv()
+        return result

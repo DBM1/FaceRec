@@ -1,0 +1,6 @@
+2018-09-12 19:40:21,825 - DataBase.py[line:23] - INFO: database class is creating...
+2018-09-12 19:40:22,008 - DataBase.py[line:51] - INFO: database is connecting...
+2018-09-12 19:40:43,565 - DataBase.py[line:56] - INFO: select * from empinfo where Emp_id=000001
+2018-09-12 19:40:43,596 - DataBase.py[line:56] - INFO: select password from empinfo where Emp_id=000001
+2018-09-12 19:41:05,584 - DataBase.py[line:67] - INFO: INSERT INTO `facepro`.`empinfo` (`Emp_id`, `Emp_name`, `Emp_department`, `password`, `Emp_photo`) VALUES ('000003', 'name', 'SEU', '000003', 'None')
+2018-09-12 19:41:05,617 - DataBase.py[line:80] - ERROR: update database exception, (1062, "Duplicate entry '000003' for key 'PRIMARY'")

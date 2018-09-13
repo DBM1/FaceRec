@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 import sys
+
 sys.path.append('../')
 from kivy.app import App
 from kivy.lang import Builder
@@ -11,7 +12,6 @@ from kivy.clock import Clock
 from kivy.graphics.texture import Texture
 import cv2
 
-import os
 import numpy as np
 from Core import CNN
 import tensorflow as tf
@@ -109,6 +109,7 @@ class KivyCamera(Image):
         KivyCamera.capturing = True
         self.capture = cv2.VideoCapture(0)
         self.index = 0
+        self.count = 0
         Clock.schedule_interval(self.update, 1.0 / fps)
 
     def remove(self):
@@ -121,14 +122,17 @@ class KivyCamera(Image):
             if (self.index < 50):
                 faces = self.classifier.detectMultiScale(frame, 1.1, 3, minSize=(150, 150))
                 for (x, y, w, h) in faces:
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                    face = frame[y:y + h, x:x + w]
-                    face = cv2.resize(face, (64, 64))
-                    face = np.expand_dims(face, 0)
-                    result = sess.run(output,
-                                      feed_dict={CNN.x_data: face, CNN.keep_porb1: 1.0, CNN.keep_porb2: 1.0})
-                    self.jugement[[np.argmax(result)]] += 1
-                    self.index += 1
+                    if self.count > 10:
+                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                        face = frame[y:y + h, x:x + w]
+                        face = cv2.resize(face, (64, 64))
+                        face = np.expand_dims(face, 0)
+                        result = sess.run(output,
+                                          feed_dict={CNN.x_data: face, CNN.keep_porb1: 1.0, CNN.keep_porb2: 1.0})
+                        if (len(self.jugement) > np.argmax(result)):
+                            self.jugement[np.argmax(result)] += 1
+                            self.index += 1
+                    self.count += 1
             else:
                 rate = self.jugement[np.argmax(self.jugement)] / 50.0
                 if rate > 0.85:
@@ -142,7 +146,7 @@ class KivyCamera(Image):
                 eng.runAndWait()
                 self.jugement = np.zeros([classnum])
                 self.index = 0
-                KivyCamera.capturing = False
+                self.count = 0
             # convert it to texture
             buf1 = cv2.flip(frame, 0)
             buf = buf1.tostring()

@@ -63,6 +63,11 @@ def get_except_record(info):
     return result
 
 
+def get_last_id(info):
+    result=DbOp.get_last_id()
+    return result
+
+
 class FaceProServer(socketserver.BaseRequestHandler):
     def handle(self):
         conn = self.request
@@ -87,7 +92,8 @@ if __name__ == "__main__":
     server_port = int(cf.get("Server", "port"))
 
     func = {"login": login, "change_psw": change_psw, "get_info": get_info, "get_record": get_record_and_state,
-            "add_emp_info": add_emp_info, "get_info_by_name": get_info_by_name, "get_except_record": get_except_record
+            "add_emp_info": add_emp_info, "get_info_by_name": get_info_by_name, "get_except_record": get_except_record,
+            "get_last_id":get_last_id
             }
 
     socketserver.ThreadingTCPServer((server_host, server_port), FaceProServer).serve_forever()

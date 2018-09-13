@@ -1,5 +1,6 @@
 ﻿# coding=utf-8
 import sys
+
 sys.path.append('../')
 from kivy.app import App
 from kivy.lang import Builder
@@ -229,6 +230,7 @@ Builder.load_string("""
             TextInput:
                 id: ID
                 hint_text: "工号"
+                readonly: True
                 size_hint: (0.23, 1/17)
                 pos_hint: {'center_x': 0.79, 'y': 0.63}
                 background_normal: 'UI/input_line.png'
@@ -608,6 +610,7 @@ class InputAdScreen(Screen):
 
     def fun(self):
         if not KivyCamera.capturing:
+            self.ids["ID"].text = empclient.get_last_id()
             id = self.ids["ID"].text
             name = self.ids["name"].text
             department = self.ids["apartment"].text
@@ -617,7 +620,7 @@ class InputAdScreen(Screen):
                 if (empclient.add_emp_info(id, name, department, "None")):
                     print("Adding employee information successful!")
                 else:
-                    s = "网络错误"
+                    s = "录入信息失败，请检查数据"
                     p = MyPopup()
                     p.modify(s)
                     p.open()
@@ -798,4 +801,3 @@ class SuperAdministerApp(App):
 
 
 SuperAdministerApp().run()
-os.system("pause")
