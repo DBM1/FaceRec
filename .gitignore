@@ -1,8 +1,0 @@
-
-TestImage/test/105.png
-TestImage/test/10.png
-*.png
-*.pyc
-*.pyc
-Core/__pycache__/__init__.cpython-36.pyc
-Core/__pycache__/CNN.cpython-36.pyc

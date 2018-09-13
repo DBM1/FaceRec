@@ -219,6 +219,8 @@ def addTrain(trainX, trainY, tfSavePath):
 
 def impimg():
     path = "../TrainImage"
+    if not os.path.exists(path):
+        os.makedirs(path)
     filename = os.listdir(path)
     length = len(filename)
     imgList = []
@@ -243,6 +245,8 @@ def impimg():
 
 def commitAdd():
     addPath = "../NewImage"
+    if not os.path.exists"../TrainImage"):
+        os.makedirs("../TrainImage")
     filenameNew = os.listdir(addPath)
     f = open("./id.txt", 'a+')
     for name in filenameNew:
@@ -255,6 +259,8 @@ def commitAdd():
 def addimpimg():
     path = "../TrainImage"
     addPath = "../NewImage"
+    if not os.path.exists(path):
+        os.makedirs(path)
     filenameOld = os.listdir(path)
     filenameNew = os.listdir(addPath)
     lengthOld = len(filenameOld)
@@ -321,7 +327,7 @@ def rec(tfsavepath):
     classnum = 100
     cap = cv2.VideoCapture(0)
     classifier = cv2.CascadeClassifier('../Collection/haarcascade_frontalface_alt2.xml')
-    output = cnnlayer(classnum)
+    output = cnnlayer(classnum)0
     saver = tf.train.Saver()
     jugement = np.zeros([classnum])
     i = 0

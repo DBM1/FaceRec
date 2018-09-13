@@ -83,3 +83,9 @@ class EmpClient:
         self.send("get_last_id,")
         result = self.recv()
         return result
+
+    def add_record_info(self,emp_id,time):
+        info="add_record_info,"+str(emp_id)+","+str(time)
+        self.send(info)
+        result=self.recv()
+        return result

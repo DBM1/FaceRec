@@ -1,2 +1,0 @@
-python CreateModel.py
-pause

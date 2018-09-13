@@ -1,5 +1,7 @@
 ﻿# coding=utf-8
 import sys
+import time
+import datetime
 
 sys.path.append('../')
 from kivy.app import App
@@ -138,6 +140,7 @@ class KivyCamera(Image):
                 if rate > 0.85:
                     id = self.filename[np.argmax(self.jugement)]
                     record = empclient.get_info(id)
+                    # empclient.add_record_info(id, str(datetime.datetime.now()))
                     self.parent.showResult(record[0], record[1], record[2])
                     eng.say(r"欢迎，" + record[1])
                 else:

@@ -68,6 +68,13 @@ def get_last_id(info):
     return result
 
 
+def add_record_info(info):
+    emp_id=info[1]
+    time=info[2]
+    result=DbOp.add_record_info(emp_id,time)
+    return result
+
+
 class FaceProServer(socketserver.BaseRequestHandler):
     def handle(self):
         conn = self.request
@@ -93,7 +100,7 @@ if __name__ == "__main__":
 
     func = {"login": login, "change_psw": change_psw, "get_info": get_info, "get_record": get_record_and_state,
             "add_emp_info": add_emp_info, "get_info_by_name": get_info_by_name, "get_except_record": get_except_record,
-            "get_last_id":get_last_id
+            "get_last_id":get_last_id,"add_record_info":add_record_info
             }
 
     socketserver.ThreadingTCPServer((server_host, server_port), FaceProServer).serve_forever()

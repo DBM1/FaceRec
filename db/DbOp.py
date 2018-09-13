@@ -28,6 +28,8 @@ def add_record_info(emp_id, time):
 
     result = db.query(
         "select * from record_" + year + month + " where emp_id=" + emp_id + " and time like '" + new_date + "%'")
+    if result==():
+        return "False"
     result = sorted(result)
     sql = "INSERT INTO `facepro`.`record_" + year + month + "` (`emp_id`, `time`,`department`, `state`) " \
                                                             "VALUES ('" + emp_id + "', '" + time + "','" + department + "',"
@@ -46,6 +48,7 @@ def add_record_info(emp_id, time):
                 db.update(sql + "'1')")
     else:
         db.update(sql + "'" + str(int(not bool(last_rec[0][3]))) + "')")
+    return "True"
 
 
 def update_record(time=str(datetime.datetime.now())):
